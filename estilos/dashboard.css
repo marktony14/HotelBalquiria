@@ -1,0 +1,35 @@
+.dashboard .graficos {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.grafico-barras,
+.grafico-torta {
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+}
+
+.grafico-barras canvas,
+.grafico-torta canvas {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+.grafico-torta h3 {
+  margin-bottom: 10px;
+  text-align: center;
+  color: var(--morado);
+}
+
+.dashboard .header h3 {
+  margin-bottom: 100px;
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px !important;
+}
+

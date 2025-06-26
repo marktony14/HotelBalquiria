@@ -1,0 +1,30 @@
+.servicios table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #006666;
+  color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.servicios thead {
+  background-color: #004d4d;
+}
+
+.servicios th,
+.servicios td {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #ffffff33;
+  font-size: 1em;
+}
+
+.servicios tbody tr:hover {
+  background-color: #007777;
+}
+
+.servicios td:last-child {
+  font-weight: bold;
+  color: #00ff99; /* color verde del check */
+  font-size: 1.2em;
+}

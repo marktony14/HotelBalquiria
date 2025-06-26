@@ -1,0 +1,23 @@
+.reservas table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #006666;
+  color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.reservas thead {
+  background-color: #004d4d;
+}
+
+.reservas th,
+.reservas td {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #ffffff33;
+}
+
+.reservas tbody tr:hover {
+  background-color: #007777;
+}

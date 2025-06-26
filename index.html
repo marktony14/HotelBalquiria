@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hotel Valquiria</title>
+  <link rel="stylesheet" href="estilos/global.css">
+</head>
+<body>
+  <section class="dashboard">
+    <!-- Menú lateral -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="img/logo-valquiria.png" alt="Logo Hotel Valquiria">
+      </div>
+      <ul class="menu">
+        <li onclick="cargarPagina('inicio')">Inicio</li>
+        <li onclick="cargarPagina('dashboard')">Dashboard</li>
+        <li onclick="cargarPagina('reservas')">Reservas</li>
+        <li onclick="cargarPagina('servicios')">Servicios Solicitados</li>
+        <li onclick="cargarPagina('habitaciones')">Habitaciones</li>
+      </ul>
+    </nav>
+
+    <!-- Contenedor del contenido dinámico -->
+    <div id="contenido-principal"></div>
+  </section>
+
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
+</html>

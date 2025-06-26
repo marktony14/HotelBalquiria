@@ -1,0 +1,19 @@
+.inicio .header h3 {
+  color: #9316c0;
+}
+.inicio .titulo {
+  text-align: center;
+  color: #ffc107;
+}
+.inicio .ilustracion img {
+  display: block;
+  margin: 30px auto;
+  width: 410px;
+}
+.inicio .descripcion {
+  text-align: center;
+  max-width: 600px;
+  margin: auto;
+  font-size: 1.1em;
+  color: #333;
+}

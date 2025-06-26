@@ -1,0 +1,14 @@
+.habitaciones table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #006666;
+  color: white;
+}
+.habitaciones th, .habitaciones td {
+  padding: 10px;
+  border-bottom: 1px solid #ffffff33;
+  text-align: center;
+}
+.habitaciones thead {
+  background-color: #004d4d;
+}

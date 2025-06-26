@@ -33,3 +33,26 @@ canvas {
   height: 300px !important;
 }
 
+.grafico-barras,
+.grafico-barras-horizontales {
+  background-color: #f4f4f4;
+  padding: 20px;
+  margin-top: 40px;
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+}
+
+.grafico-barras canvas,
+.grafico-barras-horizontales canvas {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+.grafico-barras h3,
+.grafico-barras-horizontales h3 {
+  text-align: center;
+  color: var(--morado);
+  margin-bottom: 15px;
+}
+
+

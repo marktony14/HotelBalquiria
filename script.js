@@ -13,6 +13,9 @@ function cargarPagina(pagina) {
       if (pagina === "habitaciones") {
         mostrarHabitaciones();
       }
+      if (pagina === "servicios") {
+        mostrarServiciosSolicitados();
+      }
     });
 }
 
@@ -255,6 +258,54 @@ function mostrarHabitaciones() {
           `;
           document.getElementById("modal-hab-body").innerHTML = body;
           document.getElementById("modal-habitacion").style.display = "flex";
+        });
+      });
+    });
+}
+
+function mostrarServiciosSolicitados() {
+  if (!supabase) {
+    console.error("Supabase no está inicializado");
+    return;
+  }
+  // Traer servicios solicitados + info de servicio + habitación
+  supabase
+    .from("servicios_solicitados")
+    .select(
+      "id, id_servicio, id_alojamiento, cantidad, estado, servicios:servicios(id, descripcion, tipo_servicio), alojamiento:alojamientos(id_habitacion)"
+    )
+    .then(({ data, error }) => {
+      if (error) {
+        console.error("Error obteniendo servicios solicitados:", error);
+        return;
+      }
+      // Ordenar por id descendente (mayor prioridad primero)
+      data.sort((a, b) => b.id - a.id);
+      const tbody = document.querySelector(".tabla-servicios tbody");
+      tbody.innerHTML = "";
+      data.forEach((s, idx) => {
+        const entregado = s.estado;
+        tbody.innerHTML += `
+          <tr>
+            <td>${s.alojamiento?.id_habitacion || ''}</td>
+            <td>${s.servicios?.descripcion || ''}</td>
+            <td>${s.cantidad || 1}</td>
+            <td>${idx + 1}</td>
+            <td>
+              <button class="btn-entrega" data-id="${s.id}" ${entregado ? 'disabled' : ''}>
+                ${entregado ? 'Entregado' : 'Confirmar'}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      // Evento para confirmar entrega
+      document.querySelectorAll('.btn-entrega').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const id = this.getAttribute('data-id');
+          this.disabled = true;
+          this.textContent = 'Entregado';
+          await supabase.from('servicios_solicitados').update({ estado: true }).eq('id', id);
         });
       });
     });

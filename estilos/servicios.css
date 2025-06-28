@@ -28,3 +28,25 @@
   color: #00ff99; /* color verde del check */
   font-size: 1.2em;
 }
+
+.btn-entrega {
+  background: #9316c0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px #9316c055;
+}
+.btn-entrega:hover:not(:disabled) {
+  background: #16c093;
+  color: #fff;
+}
+.btn-entrega:disabled {
+  background: #aaa;
+  color: #eee;
+  cursor: not-allowed;
+}

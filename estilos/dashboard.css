@@ -1,6 +1,6 @@
 :root {
   --morado: #6c3eb6;
-  --gris-fondo: #f4f4f4;
+  --gris-fondo: #f7f7fa;
   --sombra: 0 7px 25px rgba(0, 0, 0, 0.08);
 }
 
@@ -34,26 +34,30 @@
 
 .dashboard-card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: var(--sombra);
-  padding: 24px 18px 18px 18px;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px 0 rgba(108, 62, 182, 0.07);
+  padding: 28px 18px 18px 18px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  transition: box-shadow 0.3s, transform 0.3s;
 }
-
+.dashboard-card:hover {
+  box-shadow: 0 8px 40px 0 rgba(108, 62, 182, 0.13);
+  transform: translateY(-4px) scale(1.01);
+}
 .dashboard-card h3 {
   color: var(--morado);
   font-size: 1.1rem;
   margin-bottom: 18px;
   text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
-
 .dashboard-card canvas {
   width: 100% !important;
   height: 260px !important;
 }
-
 @media (max-width: 900px) {
   .dashboard-graficos {
     grid-template-columns: 1fr;

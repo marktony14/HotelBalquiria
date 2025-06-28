@@ -1,12 +1,14 @@
 .reservas table {
   width: 100%;
-  border-collapse: collapse;
-  background-color: #006666;
-  color: white;
-  border-radius: 16px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  color: #222;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 32px 0 rgba(108, 62, 182, 0.07);
   animation: fadeInTable 1s;
+  margin-bottom: 32px;
 }
 
 @keyframes fadeInTable {
@@ -20,14 +22,21 @@
   }
 }
 
-
 .reservas th,
 .reservas td {
-  padding: 15px;
+  padding: 16px 10px;
   text-align: center;
-  border-bottom: 1px solid #ffffff33;
-  font-size: 1.1em;
+  border-bottom: 1px solid #ececf3;
+  font-size: 1.08em;
   transition: background 0.3s, color 0.3s;
+}
+
+.reservas th {
+  background: var(--gris-claro);
+  color: var(--morado-oscuro);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 1.1em;
 }
 
 .reservas tbody tr {
@@ -35,10 +44,10 @@
 }
 
 .reservas tbody tr:hover {
-  background-color: #16c093;
-  color: #fff;
-  transform: scale(1.02);
-  box-shadow: 0 2px 12px 0 #9316c055;
+  background: #f7f7fa;
+  color: var(--morado);
+  transform: scale(1.01);
+  box-shadow: 0 2px 12px 0 #6c3eb610;
 }
 
 .reservas .icono-habitacion {
@@ -46,7 +55,7 @@
   height: 32px;
   vertical-align: middle;
   margin-right: 8px;
-  filter: drop-shadow(0 2px 4px #0003);
+  filter: drop-shadow(0 2px 4px #0001);
 }
 
 .reservas .estado {
@@ -54,11 +63,11 @@
   border-radius: 12px;
   font-weight: bold;
   display: inline-block;
-  background: #9316c0;
+  background: var(--morado);
   color: #fff;
   font-size: 0.95em;
   letter-spacing: 1px;
-  box-shadow: 0 1px 4px #9316c033;
+  box-shadow: 0 1px 6px #6c3eb610;
 }
 
 .reservas .estado.ALOJADO {

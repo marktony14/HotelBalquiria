@@ -1,19 +1,41 @@
 .inicio .header h3 {
-  color: #9316c0;
+  color: var(--morado);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-align: left;
+  opacity: 0.9;
+  transition: color 0.3s;
 }
 .inicio .titulo {
   text-align: center;
-  color: #ffc107;
+  color: var(--morado-oscuro);
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
 }
 .inicio .ilustracion img {
   display: block;
-  margin: 30px auto;
-  width: 410px;
+  margin: 32px auto 24px auto;
+  width: 320px;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px #6c3eb610;
+  transition: transform 0.3s;
+}
+.inicio .ilustracion img:hover {
+  transform: scale(1.04) rotate(-2deg);
 }
 .inicio .descripcion {
   text-align: center;
   max-width: 600px;
   margin: auto;
-  font-size: 1.1em;
-  color: #333;
+  font-size: 1.15em;
+  color: #444;
+  background: var(--gris-claro);
+  border-radius: 12px;
+  padding: 18px 24px;
+  box-shadow: 0 2px 12px #0001;
+  margin-top: 18px;
 }

@@ -1,11 +1,12 @@
 :root {
-  --blanco: #fff6ff;
-  --morado: #9316c0;
+  --blanco: #fff;
+  --gris: #f7f7fa;
+  --gris-claro: #ececf3;
+  --morado: #6c3eb6;
   --morado-oscuro: #4a2887;
-  --gris: #f0f0f0;
-  --negro: #221824;
   --amarillo: #ffc107;
-  --fuente: 'Raleway', sans-serif;
+  --negro: #221824;
+  --fuente: "Raleway", "Segoe UI", Arial, sans-serif;
 }
 
 * {
@@ -16,45 +17,46 @@
 }
 
 body {
-  background-color: var(--gris);
-  overflow-x: hidden;
+  background: var(--gris);
+  color: var(--negro);
+  font-size: 1.08rem;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
 .dashboard {
   display: flex;
   min-height: 100vh;
+  background: var(--gris);
 }
 
 .sidebar {
-  width: 250px;
-  height: 100vh;
-  background-color: var(--morado-oscuro);
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  background: var(--morado-oscuro);
   color: var(--blanco);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 20px;
-  
+  padding: 32px 0 0 0;
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.06);
+  border-radius: 0 24px 24px 0;
   position: sticky;
   top: 0;
-  flex-shrink: 0;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.07);
-}
-
-.sidebar .logo {
-  text-align: center;
-  margin-bottom: 30px;
+  z-index: 10;
 }
 
 .sidebar .logo img {
-  width: 120px;
-  height: auto;
+  width: 110px;
+  margin-bottom: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0001;
 }
 
 .sidebar .menu {
-  list-style: none;
   width: 100%;
-  padding: 0;
+  list-style: none;
 }
 
 .sidebar .menu li {
@@ -62,10 +64,11 @@ body {
   align-items: center;
   gap: 14px;
   font-size: 1.08rem;
-  padding: 15px 30px;
+  padding: 14px 32px;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s;
   border-left: 4px solid transparent;
+  border-radius: 0 18px 18px 0;
+  transition: background 0.25s, color 0.25s, border 0.25s;
 }
 
 .sidebar .menu li i {
@@ -74,8 +77,9 @@ body {
   text-align: center;
 }
 
-.sidebar .menu li:hover, .sidebar .menu li.active {
-  background-color: var(--morado);
+.sidebar .menu li:hover,
+.sidebar .menu li.active {
+  background: var(--morado);
   color: var(--amarillo);
   border-left: 4px solid var(--amarillo);
 }
@@ -86,8 +90,21 @@ body {
 
 #contenido-principal {
   flex-grow: 1;
-  padding: 40px;
-  background-color: var(--blanco);
+  padding: 48px 5vw 32px 5vw;
+  background: var(--blanco);
+  border-radius: 24px;
+  min-height: 100vh;
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.04);
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: var(--gris-claro);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--morado-oscuro);
+  border-radius: 8px;
 }
 
 /* Encabezados generales */
@@ -109,28 +126,24 @@ body {
 
 @media (max-width: 992px) {
   .sidebar {
-    position: fixed;
-    left: -250px;
-    transition: left 0.3s ease;
-    z-index: 1000;
-    width: 200px;
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
+    padding: 18px 0 0 0;
+    border-radius: 0 12px 12px 0;
   }
-
-  .sidebar.active {
-    left: 0;
-  }
-
   .sidebar .logo img {
-    width: 90px;
+    width: 40px;
+    margin-bottom: 12px;
   }
-
   .sidebar .menu li {
     font-size: 0.98rem;
-    padding: 12px 18px;
+    padding: 10px 10px;
+    border-radius: 0 10px 10px 0;
   }
-
   #contenido-principal {
-    padding: 20px;
+    padding: 18px 2vw 18px 2vw;
+    border-radius: 10px;
   }
 }
 
@@ -155,8 +168,13 @@ body {
 }
 
 @media (max-width: 480px) {
+  .sidebar {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
   .sidebar .logo img {
-    width: 80px;
+    width: 32px;
   }
 
   .header h3 {

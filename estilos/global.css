@@ -38,6 +38,7 @@ body {
   position: sticky;
   top: 0;
   flex-shrink: 0;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.07);
 }
 
 .sidebar .logo {
@@ -57,13 +58,30 @@ body {
 }
 
 .sidebar .menu li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1.08rem;
   padding: 15px 30px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s, color 0.3s;
+  border-left: 4px solid transparent;
 }
 
-.sidebar .menu li:hover {
+.sidebar .menu li i {
+  font-size: 1.2em;
+  width: 22px;
+  text-align: center;
+}
+
+.sidebar .menu li:hover, .sidebar .menu li.active {
   background-color: var(--morado);
+  color: var(--amarillo);
+  border-left: 4px solid var(--amarillo);
+}
+
+.sidebar .menu li span {
+  flex: 1;
 }
 
 #contenido-principal {
@@ -95,10 +113,20 @@ body {
     left: -250px;
     transition: left 0.3s ease;
     z-index: 1000;
+    width: 200px;
   }
 
   .sidebar.active {
     left: 0;
+  }
+
+  .sidebar .logo img {
+    width: 90px;
+  }
+
+  .sidebar .menu li {
+    font-size: 0.98rem;
+    padding: 12px 18px;
   }
 
   #contenido-principal {

@@ -368,3 +368,7 @@ function mostrarServiciosSolicitados() {
       });
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  cargarPagina("inicio");
+});

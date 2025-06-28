@@ -204,6 +204,9 @@ async function mostrarAlojamientosEnReservas() {
       mapaClientes[c.nro_doc] = c;
     });
 
+    // Mostrar alojamientos con ids de manera descendente
+    alojamientos.sort((a, b) => (b.id || 0) - (a.id || 0));
+
     const tbody = document.querySelector(".tabla-reservas tbody");
     tbody.innerHTML = "";
     alojamientos.forEach((a) => {

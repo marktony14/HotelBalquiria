@@ -10,6 +10,9 @@ function cargarPagina(pagina) {
       if (pagina === "reservas") {
         mostrarAlojamientosEnReservas();
       }
+      if (pagina === "habitaciones") {
+        mostrarHabitaciones();
+      }
     });
 }
 
@@ -174,4 +177,85 @@ async function mostrarAlojamientosEnReservas() {
         err.message || err
       }</td></tr>`;
   }
+}
+
+// Modal para mostrar detalles de la habitación
+function crearModalHabitacion() {
+  if (document.getElementById("modal-habitacion")) return;
+  const modal = document.createElement("div");
+  modal.id = "modal-habitacion";
+  modal.innerHTML = `
+    <div class="modal-bg"></div>
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <div id="modal-hab-body"></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector(".modal-close").onclick = () =>
+    (modal.style.display = "none");
+  modal.querySelector(".modal-bg").onclick = () =>
+    (modal.style.display = "none");
+}
+
+function mostrarHabitaciones() {
+  crearModalHabitacion();
+  if (!supabase) {
+    console.error("Supabase no está inicializado");
+    return;
+  }
+  supabase
+    .from("habitaciones")
+    .select("codigo_habitacion, piso, precio_dia, tipo, imagenes, description")
+    .then(({ data, error }) => {
+      if (error) {
+        console.error("Error obteniendo habitaciones:", error);
+        return;
+      }
+      const tbody = document.querySelector(".tabla-habitaciones tbody");
+      tbody.innerHTML = "";
+      data.forEach((h, idx) => {
+        tbody.innerHTML += `
+          <tr class="fila-hab" data-idx="${idx}">
+            <td>${idx + 1}</td>
+            <td>${h.codigo_habitacion || ""}</td>
+            <td>PISO ${h.piso || ""}</td>
+            <td>S/.${h.precio_dia?.toFixed(2) || ""}</td>
+          </tr>
+        `;
+      });
+      // Evento para mostrar modal al hacer click
+      document.querySelectorAll(".fila-hab").forEach((tr, i) => {
+        tr.addEventListener("click", function () {
+          const h = data[i];
+          let imgHtml = "";
+          if (h.imagenes && h.imagenes.length > 0) {
+            imgHtml = `<div class='galeria-img'>
+              <img src='${h.imagenes[0]}' alt='Habitación' class='img-habitacion-principal' id='img-principal-modal'>`;
+            if (h.imagenes.length > 1) {
+              imgHtml += `<div class='miniaturas'>`;
+              h.imagenes.forEach((img) => {
+                imgHtml += `<img src='${img}' alt='Miniatura' class='img-miniatura' onclick='document.getElementById("img-principal-modal").src = this.src'>`;
+              });
+              imgHtml += `</div>`;
+            }
+            imgHtml += `</div>`;
+          } else {
+            imgHtml = `<img src='img/hotel-icono.png' alt='Sin imagen' class='img-habitacion-principal'>`;
+          }
+          const body = `
+            <h2>Habitación ${h.codigo_habitacion || ""}</h2>
+            <div><b>Tipo:</b> ${h.tipo || ""}</div>
+            <div><b>Piso:</b> ${h.piso || ""}</div>
+            <div><b>Precio por día:</b> S/.${
+              h.precio_dia?.toFixed(2) || ""
+            }</div>
+            <div class='desc-hab'>${h.description || ""}</div>
+            ${imgHtml}
+          `;
+          document.getElementById("modal-hab-body").innerHTML = body;
+          document.getElementById("modal-habitacion").style.display = "flex";
+        });
+      });
+    });
 }

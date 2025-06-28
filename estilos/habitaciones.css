@@ -4,11 +4,189 @@
   background-color: #006666;
   color: white;
 }
-.habitaciones th, .habitaciones td {
+.habitaciones th,
+.habitaciones td {
   padding: 10px;
   border-bottom: 1px solid #ffffff33;
   text-align: center;
 }
 .habitaciones thead {
   background-color: #004d4d;
+}
+.img-habitacion {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 8px;
+  box-shadow: 0 2px 8px #9316c055;
+  vertical-align: middle;
+  transition: transform 0.3s;
+}
+.img-habitacion:hover {
+  transform: scale(1.12) rotate(-2deg);
+}
+.tabla-habitaciones tbody tr {
+  transition: background 0.3s, transform 0.2s;
+}
+.tabla-habitaciones tbody tr:hover {
+  background: #16c093;
+  color: #fff;
+  transform: scale(1.01);
+}
+.tabla-habitaciones td,
+.tabla-habitaciones th {
+  font-size: 1.1em;
+}
+.fila-hab {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.fila-hab:hover {
+  background: #16c093;
+  color: #fff;
+}
+.fila-img-hab td {
+  background: #f8f8ff;
+  padding: 18px 10px 18px 10px;
+  text-align: center;
+  border-bottom: 2px solid #9316c0;
+}
+.galeria-img {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.img-habitacion-principal {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 8px #9316c055;
+  transition: transform 0.3s;
+}
+.img-habitacion-principal:hover {
+  transform: scale(1.08) rotate(-2deg);
+}
+.miniaturas {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+.img-miniatura {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid #9316c0;
+  cursor: pointer;
+  transition: border 0.2s, transform 0.2s;
+}
+.img-miniatura:hover {
+  border: 2px solid #16c093;
+  transform: scale(1.12);
+}
+.codigo-hab {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #9316c0;
+  margin-top: 4px;
+}
+.desc-hab {
+  margin-top: 10px;
+  color: #333;
+  font-size: 1em;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#modal-habitacion {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+}
+#modal-habitacion .modal-bg {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background: #0008;
+  top: 0;
+  left: 0;
+}
+#modal-habitacion .modal-content {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px 24px 24px;
+  min-width: 320px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px #9316c088;
+  z-index: 2;
+  animation: modalIn 0.3s;
+}
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+#modal-habitacion .modal-close {
+  position: absolute;
+  top: 10px;
+  right: 18px;
+  font-size: 2em;
+  color: #9316c0;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+#modal-habitacion .modal-close:hover {
+  color: #16c093;
+}
+#modal-hab-body h2 {
+  margin-top: 0;
+  color: #004d4d;
+  font-size: 1.4em;
+}
+#modal-hab-body .desc-hab {
+  margin: 16px 0 8px 0;
+  color: #333;
+  font-size: 1.05em;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#modal-hab-body .galeria-img {
+  margin-top: 12px;
+}
+#modal-hab-body .img-habitacion-principal {
+  width: 180px;
+  height: 180px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+#modal-hab-body .miniaturas {
+  gap: 6px;
+  margin-top: 4px;
+}
+#modal-hab-body .img-miniatura {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
 }

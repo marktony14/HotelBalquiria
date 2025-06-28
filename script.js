@@ -218,13 +218,37 @@ async function mostrarAlojamientosEnReservas() {
         <td>${nombreDni || ""}</td>
         <td>${a.fecha_alojamiento || ""}</td>
         <td>${a.fecha_alojamiento_vencimiento || ""}</td>
-        <td><span class="estado ${a.estado_reserva}">${
-        a.estado_reserva || ""
-      }</span></td>
+        <td>
+          <select class="select-estado" data-id="${a.id}">
+            <option value="PENDIENTE" ${
+              a.estado_reserva === "PENDIENTE" ? "selected" : ""
+            }>PENDIENTE</option>
+            <option value="ALOJADO" ${
+              a.estado_reserva === "ALOJADO" ? "selected" : ""
+            }>ALOJADO</option>
+            <option value="VENCIDO" ${
+              a.estado_reserva === "VENCIDO" ? "selected" : ""
+            }>VENCIDO</option>
+          </select>
+        </td>
         <td class="comentario">${a.comentario || ""}</td>
       `;
       tbody.appendChild(tr);
     });
+    // Evento para actualizar estado
+    setTimeout(() => {
+      document.querySelectorAll(".select-estado").forEach((sel) => {
+        sel.addEventListener("change", async function () {
+          const id = this.getAttribute("data-id");
+          const nuevoEstado = this.value;
+          await supabase
+            .from("alojamientos")
+            .update({ estado_reserva: nuevoEstado })
+            .eq("id", id);
+          this.className = "select-estado " + nuevoEstado;
+        });
+      });
+    }, 100);
   } catch (err) {
     console.error("Error mostrando alojamientos:", err);
     const tbody = document.querySelector(".tabla-reservas tbody");

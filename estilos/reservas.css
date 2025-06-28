@@ -3,21 +3,76 @@
   border-collapse: collapse;
   background-color: #006666;
   color: white;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+  animation: fadeInTable 1s;
 }
 
-.reservas thead {
-  background-color: #004d4d;
+@keyframes fadeInTable {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 
 .reservas th,
 .reservas td {
   padding: 15px;
   text-align: center;
   border-bottom: 1px solid #ffffff33;
+  font-size: 1.1em;
+  transition: background 0.3s, color 0.3s;
+}
+
+.reservas tbody tr {
+  transition: background 0.3s, transform 0.2s;
 }
 
 .reservas tbody tr:hover {
-  background-color: #007777;
+  background-color: #16c093;
+  color: #fff;
+  transform: scale(1.02);
+  box-shadow: 0 2px 12px 0 #9316c055;
+}
+
+.reservas .icono-habitacion {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  margin-right: 8px;
+  filter: drop-shadow(0 2px 4px #0003);
+}
+
+.reservas .estado {
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-weight: bold;
+  display: inline-block;
+  background: #9316c0;
+  color: #fff;
+  font-size: 0.95em;
+  letter-spacing: 1px;
+  box-shadow: 0 1px 4px #9316c033;
+}
+
+.reservas .estado.ALOJADO {
+  background: #16c093;
+}
+.reservas .estado.PENDIENTE {
+  background: #ff9900;
+}
+.reservas .estado.CANCELADO {
+  background: #c01616;
+}
+
+.reservas .comentario {
+  font-style: italic;
+  color: #ff9900;
+  font-size: 0.98em;
 }

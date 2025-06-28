@@ -1,58 +1,67 @@
-.dashboard .graficos {
+:root {
+  --morado: #6c3eb6;
+  --gris-fondo: #f4f4f4;
+  --sombra: 0 7px 25px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-nuevo {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--gris-fondo);
+  padding: 40px 0 0 0;
+}
+
+.dashboard-header {
+  padding-left: 40px;
+  margin-bottom: 32px;
+}
+
+.dashboard-titulo {
+  color: var(--morado);
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: left;
+}
+
+.dashboard-graficos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 32px;
+  padding: 0 40px 40px 40px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--sombra);
+  padding: 24px 18px 18px 18px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  align-items: stretch;
 }
 
-.grafico-barras,
-.grafico-torta {
-  background-color: #f4f4f4;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-}
-
-.grafico-barras canvas,
-.grafico-torta canvas {
-  width: 100% !important;
-  height: 300px !important;
-}
-
-.grafico-torta h3 {
-  margin-bottom: 10px;
-  text-align: center;
+.dashboard-card h3 {
   color: var(--morado);
-}
-
-.dashboard .header h3 {
-  margin-bottom: 100px;
-}
-
-canvas {
-  width: 100% !important;
-  height: 300px !important;
-}
-
-.grafico-barras,
-.grafico-barras-horizontales {
-  background-color: #f4f4f4;
-  padding: 20px;
-  margin-top: 40px;
-  border-radius: 10px;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-}
-
-.grafico-barras canvas,
-.grafico-barras-horizontales canvas {
-  width: 100% !important;
-  height: 300px !important;
-}
-
-.grafico-barras h3,
-.grafico-barras-horizontales h3 {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
   text-align: center;
-  color: var(--morado);
-  margin-bottom: 15px;
 }
 
+.dashboard-card canvas {
+  width: 100% !important;
+  height: 260px !important;
+}
 
+@media (max-width: 900px) {
+  .dashboard-graficos {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 24px;
+    padding: 0 10px 20px 10px;
+  }
+  .dashboard-header {
+    padding-left: 10px;
+  }
+}

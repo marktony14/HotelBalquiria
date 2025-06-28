@@ -19,16 +19,27 @@ function cargarPagina(pagina) {
     });
 }
 
-function cargarGraficosDashboard() {
+async function cargarGraficosDashboard() {
+  // 1. Gráfico de reservas por día
+  const { data: alojamientos } = await supabase
+    .from("alojamientos")
+    .select("fecha_alojamiento");
+  const reservasPorDia = {};
+  (alojamientos || []).forEach((a) => {
+    reservasPorDia[a.fecha_alojamiento] =
+      (reservasPorDia[a.fecha_alojamiento] || 0) + 1;
+  });
+  const labelsReservas = Object.keys(reservasPorDia);
+  const dataReservas = Object.values(reservasPorDia);
   const ctxBar = document.getElementById("graficoReservas").getContext("2d");
   new Chart(ctxBar, {
     type: "bar",
     data: {
-      labels: ["10/06", "11/06", "12/06", "13/06", "14/06"],
+      labels: labelsReservas,
       datasets: [
         {
           label: "Reservas",
-          data: [12, 19, 14, 23, 28],
+          data: dataReservas,
           backgroundColor: "#9316c0",
         },
       ],
@@ -39,15 +50,32 @@ function cargarGraficosDashboard() {
     },
   });
 
+  // 2. Gráfico de servicios solicitados (torta)
+  const { data: serviciosSolicitados } = await supabase
+    .from("servicios_solicitados")
+    .select("id_servicio, cantidad, servicios:servicios(descripcion)");
+  const serviciosCount = {};
+  (serviciosSolicitados || []).forEach((s) => {
+    const nombre = s.servicios?.descripcion || "Otro";
+    serviciosCount[nombre] = (serviciosCount[nombre] || 0) + (s.cantidad || 1);
+  });
+  const labelsServicios = Object.keys(serviciosCount);
+  const dataServicios = Object.values(serviciosCount);
   const ctxPie = document.getElementById("graficoServicios").getContext("2d");
   new Chart(ctxPie, {
     type: "pie",
     data: {
-      labels: ["Limpieza", "Room Service", "Lavandería"],
+      labels: labelsServicios,
       datasets: [
         {
-          data: [10, 20, 15],
-          backgroundColor: ["#9316c0", "#16c093", "#ff9900"],
+          data: dataServicios,
+          backgroundColor: [
+            "#9316c0",
+            "#16c093",
+            "#ff9900",
+            "#004d4d",
+            "#006666",
+          ],
         },
       ],
     },
@@ -57,17 +85,31 @@ function cargarGraficosDashboard() {
     },
   });
 
+  // 3. Gráfico de ingresos por día
+  const { data: alojamientosIngresos } = await supabase
+    .from("alojamientos")
+    .select(
+      "fecha_alojamiento, id_habitacion, habitaciones:habitaciones(precio_dia)"
+    );
+  const ingresosPorDia = {};
+  (alojamientosIngresos || []).forEach((a) => {
+    const fecha = a.fecha_alojamiento;
+    const precio = a.habitaciones?.precio_dia || 0;
+    ingresosPorDia[fecha] = (ingresosPorDia[fecha] || 0) + precio;
+  });
+  const labelsIngresos = Object.keys(ingresosPorDia);
+  const dataIngresos = Object.values(ingresosPorDia);
   const ctxIngresos = document
     .getElementById("graficoIngresos")
     .getContext("2d");
   new Chart(ctxIngresos, {
     type: "bar",
     data: {
-      labels: ["10/06", "11/06", "12/06", "13/06", "14/06"],
+      labels: labelsIngresos,
       datasets: [
         {
           label: "Ingresos (S/.)",
-          data: [300, 450, 380, 500, 620],
+          data: dataIngresos,
           backgroundColor: "#9316c0",
         },
       ],
@@ -78,17 +120,28 @@ function cargarGraficosDashboard() {
     },
   });
 
+  // 4. Gráfico reservas por tipo de habitación
+  const { data: habitacionesAloj } = await supabase
+    .from("alojamientos")
+    .select("id_habitacion, habitaciones:habitaciones(tipo)");
+  const reservasPorTipo = {};
+  (habitacionesAloj || []).forEach((a) => {
+    const tipo = a.habitaciones?.tipo || "Otro";
+    reservasPorTipo[tipo] = (reservasPorTipo[tipo] || 0) + 1;
+  });
+  const labelsTipos = Object.keys(reservasPorTipo);
+  const dataTipos = Object.values(reservasPorTipo);
   const ctxHabitaciones = document
     .getElementById("graficoHabitaciones")
     .getContext("2d");
   new Chart(ctxHabitaciones, {
     type: "bar",
     data: {
-      labels: ["Individual", "Doble", "Matrimonial", "Suite"],
+      labels: labelsTipos,
       datasets: [
         {
           label: "Reservas",
-          data: [15, 25, 10, 5],
+          data: dataTipos,
           backgroundColor: "#ff9900",
         },
       ],
@@ -287,25 +340,30 @@ function mostrarServiciosSolicitados() {
         const entregado = s.estado;
         tbody.innerHTML += `
           <tr>
-            <td>${s.alojamiento?.id_habitacion || ''}</td>
-            <td>${s.servicios?.descripcion || ''}</td>
+            <td>${s.alojamiento?.id_habitacion || ""}</td>
+            <td>${s.servicios?.descripcion || ""}</td>
             <td>${s.cantidad || 1}</td>
             <td>${idx + 1}</td>
             <td>
-              <button class="btn-entrega" data-id="${s.id}" ${entregado ? 'disabled' : ''}>
-                ${entregado ? 'Entregado' : 'Confirmar'}
+              <button class="btn-entrega" data-id="${s.id}" ${
+          entregado ? "disabled" : ""
+        }>
+                ${entregado ? "Entregado" : "Confirmar"}
               </button>
             </td>
           </tr>
         `;
       });
       // Evento para confirmar entrega
-      document.querySelectorAll('.btn-entrega').forEach(btn => {
-        btn.addEventListener('click', async function() {
-          const id = this.getAttribute('data-id');
+      document.querySelectorAll(".btn-entrega").forEach((btn) => {
+        btn.addEventListener("click", async function () {
+          const id = this.getAttribute("data-id");
           this.disabled = true;
-          this.textContent = 'Entregado';
-          await supabase.from('servicios_solicitados').update({ estado: true }).eq('id', id);
+          this.textContent = "Entregado";
+          await supabase
+            .from("servicios_solicitados")
+            .update({ estado: true })
+            .eq("id", id);
         });
       });
     });

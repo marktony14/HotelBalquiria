@@ -16,6 +16,12 @@ function cargarPagina(pagina) {
       if (pagina === "servicios") {
         mostrarServiciosSolicitados();
       }
+      if (pagina === "gestion-habitaciones") {
+        inicializarGestionHabitaciones();
+      }
+      if (pagina === "gestion-servicios") {
+        inicializarGestionServicios();
+      }
     });
 }
 
@@ -399,3 +405,39 @@ function mostrarServiciosSolicitados() {
 document.addEventListener("DOMContentLoaded", function () {
   cargarPagina("inicio");
 });
+
+// Funciones para gestión de habitaciones (solo visual)
+function inicializarGestionHabitaciones() {
+  console.log("Gestión de habitaciones inicializada");
+}
+
+function abrirModalHabitacion() {
+  document.getElementById("modalHabitacion").style.display = "flex";
+}
+
+function cerrarModalHabitacion() {
+  document.getElementById("modalHabitacion").style.display = "none";
+}
+
+// Funciones para gestión de servicios (solo visual)
+function inicializarGestionServicios() {
+  console.log("Gestión de servicios inicializada");
+
+  // Agregar eventos a los iconos
+  document.querySelectorAll(".icono-option").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      document
+        .querySelectorAll(".icono-option")
+        .forEach((b) => b.classList.remove("selected"));
+      this.classList.add("selected");
+    });
+  });
+}
+
+function abrirModalServicio() {
+  document.getElementById("modalServicio").style.display = "flex";
+}
+
+function cerrarModalServicio() {
+  document.getElementById("modalServicio").style.display = "none";
+}

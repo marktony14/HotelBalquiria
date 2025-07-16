@@ -1,0 +1,190 @@
+<link rel="stylesheet" href="estilos/gestion-habitaciones.css" />
+<div class="gestion-habitaciones">
+  <div class="gestion-header">
+    <div class="header-info">
+      <span class="seccion">ADMINISTRACIÓN/GESTIÓN</span>
+      <h2 class="titulo-gestion">GESTIÓN DE HABITACIONES</h2>
+    </div>
+    <button class="btn-nuevo" onclick="abrirModalHabitacion()">
+      <i class="fa-solid fa-plus"></i> Nueva Habitación
+    </button>
+  </div>
+
+  <div class="filtros-busqueda">
+    <div class="filtro-grupo">
+      <input
+        type="text"
+        placeholder="Buscar por código..."
+        class="input-buscar"
+      />
+      <select class="select-filtro">
+        <option value="">Todos los tipos</option>
+        <option value="simple">Simple</option>
+        <option value="doble">Doble</option>
+        <option value="suite">Suite</option>
+      </select>
+      <select class="select-filtro">
+        <option value="">Todos los pisos</option>
+        <option value="1">Piso 1</option>
+        <option value="2">Piso 2</option>
+        <option value="3">Piso 3</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="cards-container">
+    <div class="habitacion-card">
+      <div class="card-imagen">
+        <img src="img/hotel-icono.png" alt="Habitación" />
+        <div class="card-estado disponible">Disponible</div>
+      </div>
+      <div class="card-content">
+        <h3 class="card-codigo">101</h3>
+        <div class="card-detalles">
+          <span class="detalle"><i class="fa-solid fa-bed"></i> Suite</span>
+          <span class="detalle"
+            ><i class="fa-solid fa-building"></i> Piso 1</span
+          >
+          <span class="detalle"
+            ><i class="fa-solid fa-dollar-sign"></i> S/. 150.00</span
+          >
+        </div>
+        <p class="card-descripcion">
+          Habitación amplia con vista al jardín, baño privado y aire
+          acondicionado.
+        </p>
+        <div class="card-acciones">
+          <button class="btn-editar">
+            <i class="fa-solid fa-edit"></i> Editar
+          </button>
+          <button class="btn-eliminar">
+            <i class="fa-solid fa-trash"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="habitacion-card">
+      <div class="card-imagen">
+        <img src="img/hotel-icono.png" alt="Habitación" />
+        <div class="card-estado ocupada">Ocupada</div>
+      </div>
+      <div class="card-content">
+        <h3 class="card-codigo">102</h3>
+        <div class="card-detalles">
+          <span class="detalle"><i class="fa-solid fa-bed"></i> Doble</span>
+          <span class="detalle"
+            ><i class="fa-solid fa-building"></i> Piso 1</span
+          >
+          <span class="detalle"
+            ><i class="fa-solid fa-dollar-sign"></i> S/. 120.00</span
+          >
+        </div>
+        <p class="card-descripcion">
+          Habitación con dos camas, baño privado y televisión por cable.
+        </p>
+        <div class="card-acciones">
+          <button class="btn-editar">
+            <i class="fa-solid fa-edit"></i> Editar
+          </button>
+          <button class="btn-eliminar">
+            <i class="fa-solid fa-trash"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="habitacion-card">
+      <div class="card-imagen">
+        <img src="img/hotel-icono.png" alt="Habitación" />
+        <div class="card-estado mantenimiento">Mantenimiento</div>
+      </div>
+      <div class="card-content">
+        <h3 class="card-codigo">201</h3>
+        <div class="card-detalles">
+          <span class="detalle"><i class="fa-solid fa-bed"></i> Simple</span>
+          <span class="detalle"
+            ><i class="fa-solid fa-building"></i> Piso 2</span
+          >
+          <span class="detalle"
+            ><i class="fa-solid fa-dollar-sign"></i> S/. 80.00</span
+          >
+        </div>
+        <p class="card-descripcion">
+          Habitación individual con baño privado y ventilador.
+        </p>
+        <div class="card-acciones">
+          <button class="btn-editar">
+            <i class="fa-solid fa-edit"></i> Editar
+          </button>
+          <button class="btn-eliminar">
+            <i class="fa-solid fa-trash"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para nueva/editar habitación -->
+  <div class="modal-overlay" id="modalHabitacion">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>Nueva Habitación</h3>
+        <button class="modal-close" onclick="cerrarModalHabitacion()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-habitacion">
+          <div class="form-grupo">
+            <label>Código de Habitación</label>
+            <input type="text" placeholder="Ej: 101" class="input-form" />
+          </div>
+          <div class="form-grupo">
+            <label>Tipo de Habitación</label>
+            <select class="select-form">
+              <option value="">Seleccionar tipo</option>
+              <option value="simple">Simple</option>
+              <option value="doble">Doble</option>
+              <option value="suite">Suite</option>
+            </select>
+          </div>
+          <div class="form-grupo">
+            <label>Piso</label>
+            <select class="select-form">
+              <option value="">Seleccionar piso</option>
+              <option value="1">Piso 1</option>
+              <option value="2">Piso 2</option>
+              <option value="3">Piso 3</option>
+            </select>
+          </div>
+          <div class="form-grupo">
+            <label>Precio por Día (S/.)</label>
+            <input type="number" placeholder="0.00" class="input-form" />
+          </div>
+          <div class="form-grupo">
+            <label>Descripción</label>
+            <textarea
+              placeholder="Descripción de la habitación..."
+              class="textarea-form"
+            ></textarea>
+          </div>
+          <div class="form-grupo">
+            <label>Imágenes</label>
+            <div class="upload-area">
+              <i class="fa-solid fa-cloud-upload-alt"></i>
+              <p>Arrastra las imágenes aquí o haz clic para seleccionar</p>
+              <input type="file" multiple accept="image/*" class="input-file" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" onclick="cerrarModalHabitacion()">
+          Cancelar
+        </button>
+        <button class="btn-guardar">Guardar Habitación</button>
+      </div>
+    </div>
+  </div>
+</div>

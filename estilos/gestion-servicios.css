@@ -375,6 +375,259 @@
   box-shadow: 0 6px 16px rgba(108, 62, 182, 0.4);
 }
 
+/* Filtros de tipos como chips */
+.filtros-tipos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tipo-chip {
+  background: white;
+  border: 2px solid var(--gris-claro);
+  color: var(--morado);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tipo-chip:hover {
+  border-color: var(--morado);
+  background: rgba(108, 62, 182, 0.05);
+}
+
+.tipo-chip.activo {
+  background: var(--morado);
+  color: white;
+  border-color: var(--morado);
+}
+
+.spinner-tipos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--morado);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Información adicional en las cards */
+.servicio-precio {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--morado);
+  margin-bottom: 8px;
+}
+
+.servicio-solicitudes {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+/* Mensajes de estado */
+.mensaje-vacio,
+.mensaje-error {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  color: #666;
+}
+
+.mensaje-vacio i,
+.mensaje-error i {
+  font-size: 3rem;
+  color: var(--gris-claro);
+  margin-bottom: 16px;
+}
+
+.mensaje-vacio h3,
+.mensaje-error h3 {
+  color: var(--negro);
+  margin-bottom: 8px;
+}
+
+.mensaje-error {
+  background: rgba(255, 0, 0, 0.05);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+.mensaje-error i {
+  color: #ff6b6b;
+}
+
+.btn-recargar {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 16px;
+  transition: background-color 0.3s;
+}
+
+.btn-recargar:hover {
+  background: #ff5252;
+}
+
+/* Botón de reporte en header */
+.acciones-header {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-reporte {
+  background: #16c093;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(22, 192, 147, 0.3);
+}
+
+.btn-reporte:hover {
+  background: #14a085;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22, 192, 147, 0.4);
+}
+
+/* Estilos para modal de reporte */
+.modal-reporte {
+  max-width: 650px;
+}
+
+.date-range {
+  display: flex;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.date-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.date-field label {
+  font-size: 13px;
+  color: #666;
+  font-weight: normal;
+}
+
+.input-date {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--gris-claro);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.input-date:focus {
+  outline: none;
+  border-color: var(--morado);
+  box-shadow: 0 0 0 3px rgba(108, 62, 182, 0.1);
+}
+
+.radio-group,
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.radio-label,
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.radio-label:hover,
+.checkbox-label:hover {
+  background-color: var(--gris-claro);
+}
+
+.radio-text,
+.checkbox-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.radio-text i {
+  font-size: 16px;
+  color: var(--morado);
+}
+
+.btn-generar {
+  background: linear-gradient(
+    135deg,
+    var(--morado) 0%,
+    var(--morado-oscuro) 100%
+  );
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(108, 62, 182, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-generar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(108, 62, 182, 0.4);
+}
+
 @media (max-width: 768px) {
   .gestion-header {
     flex-direction: column;
@@ -393,5 +646,9 @@
 
   .iconos-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .date-range {
+    flex-direction: column;
   }
 }

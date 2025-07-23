@@ -6,157 +6,25 @@
         <span class="seccion">ADMINISTRACIÓN/GESTIÓN</span>
         <h2 class="titulo-gestion">GESTIÓN DE SERVICIOS</h2>
       </div>
-      <button class="btn-nuevo" onclick="abrirModalServicio()">
-        <i class="fa-solid fa-plus"></i> Nuevo Servicio
-      </button>
+      <div class="acciones-header">
+        <button class="btn-reporte" onclick="abrirModalReporte('todos')">
+          <i class="fa-solid fa-file-excel"></i> Generar Reporte
+        </button>
+        <button class="btn-nuevo" onclick="abrirModalTipoServicio()">
+          <i class="fa-solid fa-plus"></i> Nuevo Tipo de Servicio
+        </button>
+      </div>
+    </div>
+
+    <div class="filtros-tipos">
+      <!-- Los chips de tipos se cargarán dinámicamente -->
+      <div class="spinner-tipos" id="spinner-tipos">
+        <div class="spinner"></div>
+      </div>
     </div>
 
     <div class="servicios-grid">
-      <div class="servicio-card">
-        <div class="card-icono">
-          <i class="fa-solid fa-utensils"></i>
-        </div>
-        <div class="card-info">
-          <h3>Servicio de Comida</h3>
-          <p class="servicio-tipo">Alimentación</p>
-          <p class="servicio-descripcion">
-            Entrega de comidas y bebidas a las habitaciones
-          </p>
-          <div class="servicio-estado activo">Activo</div>
-        </div>
-        <div class="card-acciones">
-          <button class="btn-editar-servicio">
-            <i class="fa-solid fa-edit"></i>
-          </button>
-          <button class="btn-toggle-servicio">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
-          <button class="btn-eliminar-servicio">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="servicio-card">
-        <div class="card-icono">
-          <i class="fa-solid fa-broom"></i>
-        </div>
-        <div class="card-info">
-          <h3>Limpieza Extra</h3>
-          <p class="servicio-tipo">Limpieza</p>
-          <p class="servicio-descripcion">
-            Servicio adicional de limpieza de habitaciones
-          </p>
-          <div class="servicio-estado activo">Activo</div>
-        </div>
-        <div class="card-acciones">
-          <button class="btn-editar-servicio">
-            <i class="fa-solid fa-edit"></i>
-          </button>
-          <button class="btn-toggle-servicio">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
-          <button class="btn-eliminar-servicio">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="servicio-card">
-        <div class="card-icono">
-          <i class="fa-solid fa-car"></i>
-        </div>
-        <div class="card-info">
-          <h3>Transporte</h3>
-          <p class="servicio-tipo">Movilidad</p>
-          <p class="servicio-descripcion">
-            Servicio de transporte desde y hacia el aeropuerto
-          </p>
-          <div class="servicio-estado inactivo">Inactivo</div>
-        </div>
-        <div class="card-acciones">
-          <button class="btn-editar-servicio">
-            <i class="fa-solid fa-edit"></i>
-          </button>
-          <button class="btn-toggle-servicio">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
-          <button class="btn-eliminar-servicio">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="servicio-card">
-        <div class="card-icono">
-          <i class="fa-solid fa-wifi"></i>
-        </div>
-        <div class="card-info">
-          <h3>WiFi Premium</h3>
-          <p class="servicio-tipo">Tecnología</p>
-          <p class="servicio-descripcion">
-            Internet de alta velocidad en habitaciones
-          </p>
-          <div class="servicio-estado activo">Activo</div>
-        </div>
-        <div class="card-acciones">
-          <button class="btn-editar-servicio">
-            <i class="fa-solid fa-edit"></i>
-          </button>
-          <button class="btn-toggle-servicio">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
-          <button class="btn-eliminar-servicio">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="servicio-card">
-        <div class="card-icono">
-          <i class="fa-solid fa-spa"></i>
-        </div>
-        <div class="card-info">
-          <h3>Spa y Relajación</h3>
-          <p class="servicio-tipo">Bienestar</p>
-          <p class="servicio-descripcion">Masajes y tratamientos de relajación</p>
-          <div class="servicio-estado activo">Activo</div>
-        </div>
-        <div class="card-acciones">
-          <button class="btn-editar-servicio">
-            <i class="fa-solid fa-edit"></i>
-          </button>
-          <button class="btn-toggle-servicio">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
-          <button class="btn-eliminar-servicio">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="servicio-card">
-        <div class="card-icono">
-          <i class="fa-solid fa-swimming-pool"></i>
-        </div>
-        <div class="card-info">
-          <h3>Acceso a Piscina</h3>
-          <p class="servicio-tipo">Recreación</p>
-          <p class="servicio-descripcion">Uso de piscina y área de recreación</p>
-          <div class="servicio-estado inactivo">Inactivo</div>
-        </div>
-        <div class="card-acciones">
-          <button class="btn-editar-servicio">
-            <i class="fa-solid fa-edit"></i>
-          </button>
-          <button class="btn-toggle-servicio">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
-          <button class="btn-eliminar-servicio">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      </div>
+      <!-- Los servicios se cargarán dinámicamente cuando se seleccione un tipo -->
     </div>
 
     <!-- Modal para nuevo/editar servicio -->
@@ -170,76 +38,67 @@
         </div>
         <div class="modal-body">
           <form class="form-servicio">
+            <input type="hidden" id="servicio-id" value="" />
+            <input type="hidden" id="servicio-tipo-hidden" value="" />
             <div class="form-grupo">
               <label>Nombre del Servicio</label>
               <input
                 type="text"
+                id="servicio-descripcion"
                 placeholder="Nombre del servicio"
                 class="input-form"
               />
             </div>
             <div class="form-grupo">
-              <label>Tipo de Servicio</label>
-              <select class="select-form">
-                <option value="">Seleccionar tipo</option>
-                <option value="alimentacion">Alimentación</option>
-                <option value="limpieza">Limpieza</option>
-                <option value="transporte">Transporte</option>
-                <option value="tecnologia">Tecnología</option>
-                <option value="bienestar">Bienestar</option>
-                <option value="recreacion">Recreación</option>
-              </select>
-            </div>
-            <div class="form-grupo">
               <label>Descripción</label>
               <textarea
+                id="servicio-detalle"
                 placeholder="Descripción del servicio..."
                 class="textarea-form"
               ></textarea>
             </div>
             <div class="form-grupo">
-              <label>Precio (Opcional)</label>
-              <input type="number" placeholder="0.00" class="input-form" />
+              <label>Precio</label>
+              <input
+                type="number"
+                id="servicio-precio"
+                placeholder="0.00"
+                class="input-form"
+              />
             </div>
             <div class="form-grupo">
-              <label>Icono</label>
-              <div class="iconos-grid">
-                <button
-                  type="button"
-                  class="icono-option"
-                  data-icon="fa-utensils"
-                >
-                  <i class="fa-solid fa-utensils"></i>
-                </button>
-                <button type="button" class="icono-option" data-icon="fa-broom">
-                  <i class="fa-solid fa-broom"></i>
-                </button>
-                <button type="button" class="icono-option" data-icon="fa-car">
-                  <i class="fa-solid fa-car"></i>
-                </button>
-                <button type="button" class="icono-option" data-icon="fa-wifi">
-                  <i class="fa-solid fa-wifi"></i>
-                </button>
-                <button type="button" class="icono-option" data-icon="fa-spa">
-                  <i class="fa-solid fa-spa"></i>
-                </button>
-                <button
-                  type="button"
-                  class="icono-option"
-                  data-icon="fa-swimming-pool"
-                >
-                  <i class="fa-solid fa-swimming-pool"></i>
-                </button>
-                <button type="button" class="icono-option" data-icon="fa-coffee">
-                  <i class="fa-solid fa-coffee"></i>
-                </button>
-                <button
-                  type="button"
-                  class="icono-option"
-                  data-icon="fa-dumbbell"
-                >
-                  <i class="fa-solid fa-dumbbell"></i>
-                </button>
+              <label>URL de la Imagen</label>
+              <input
+                type="url"
+                id="servicio-imagen"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                class="input-form"
+              />
+              <small
+                style="
+                  color: #666;
+                  font-size: 0.85em;
+                  margin-top: 4px;
+                  display: block;
+                "
+              >
+                Ingrese la URL de la imagen del servicio (opcional)
+              </small>
+            </div>
+            <div class="form-grupo">
+              <label>Estado</label>
+              <div class="switch-container">
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    id="servicio-activo"
+                    checked
+                    title="Estado del servicio"
+                    aria-label="Servicio activo"
+                  />
+                  <span class="slider"></span>
+                </label>
+                <span class="switch-label">Servicio activo</span>
               </div>
             </div>
           </form>
@@ -248,7 +107,157 @@
           <button class="btn-cancelar" onclick="cerrarModalServicio()">
             Cancelar
           </button>
-          <button class="btn-guardar">Guardar Servicio</button>
+          <button class="btn-guardar" onclick="guardarServicio()">
+            Guardar Servicio
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para generar reporte -->
+    <div class="modal-overlay" id="modalReporte">
+      <div class="modal-container modal-reporte">
+        <div class="modal-header">
+          <h3>Generar Reporte de Servicios</h3>
+          <button
+            class="modal-close"
+            onclick="cerrarModalReporte()"
+            aria-label="Cerrar"
+            title="Cerrar"
+          >
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="form-reporte">
+            <input type="hidden" id="reporte-tipo" value="todos" />
+            <div class="form-grupo">
+              <label>Rango de fechas</label>
+              <div class="date-range">
+                <div class="date-field">
+                  <label>Desde:</label>
+                  <input
+                    type="date"
+                    id="fecha-desde"
+                    class="input-date"
+                    title="Fecha inicial"
+                    aria-label="Fecha desde"
+                  />
+                </div>
+                <div class="date-field">
+                  <label>Hasta:</label>
+                  <input
+                    type="date"
+                    id="fecha-hasta"
+                    class="input-date"
+                    title="Fecha final"
+                    aria-label="Fecha hasta"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form-grupo">
+              <label>Formato del reporte</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="formato" value="excel" checked />
+                  <span class="radio-text"
+                    ><i class="fa-solid fa-file-excel"></i> Excel</span
+                  >
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="formato" value="pdf" />
+                  <span class="radio-text"
+                    ><i class="fa-solid fa-file-pdf"></i> PDF</span
+                  >
+                </label>
+              </div>
+            </div>
+            <div class="form-grupo">
+              <label>Incluir en el reporte</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="incluir-cliente" checked />
+                  <span class="checkbox-text">Datos del cliente</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="incluir-habitacion" checked />
+                  <span class="checkbox-text">Información de habitación</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="incluir-empleado" checked />
+                  <span class="checkbox-text">Empleado asignado</span>
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModalReporte()">
+            Cancelar
+          </button>
+          <button class="btn-generar" onclick="generarReporte()">
+            <i class="fa-solid fa-file-export"></i> Generar Reporte
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de tipo de servicio -->
+    <div class="modal-overlay" id="modalTipoServicio">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3 id="tipo-servicio-titulo">Gestionar Tipo de Servicio</h3>
+          <button
+            class="modal-close"
+            onclick="cerrarModalTipoServicio()"
+            aria-label="Cerrar"
+            title="Cerrar"
+          >
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="form-tipo-servicio">
+            <input type="hidden" id="tipo-id" value="" />
+            <div class="form-grupo">
+              <label>Nombre del Tipo</label>
+              <input
+                type="text"
+                id="tipo-nombre"
+                placeholder="Nombre del tipo de servicio"
+                class="input-form"
+              />
+            </div>
+            <div class="form-grupo">
+              <label>URL de la Imagen</label>
+              <input
+                type="url"
+                id="tipo-imagen"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                class="input-form"
+              />
+              <small
+                style="
+                  color: #666;
+                  font-size: 0.85em;
+                  margin-top: 4px;
+                  display: block;
+                "
+              >
+                Ingrese la URL de la imagen que representará este tipo de
+                servicio
+              </small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModalTipoServicio()">
+            Cancelar
+          </button>
+          <button class="btn-guardar" onclick="guardarTipoServicio()">
+            Guardar Tipo
+          </button>
         </div>
       </div>
     </div>

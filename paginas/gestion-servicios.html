@@ -7,8 +7,8 @@
         <h2 class="titulo-gestion">GESTIÓN DE SERVICIOS</h2>
       </div>
       <div class="acciones-header">
-        <button class="btn-reporte" onclick="abrirModalReporte('todos')">
-          <i class="fa-solid fa-file-excel"></i> Generar Reporte
+        <button class="btn-reporte" onclick="abrirModalReporte()">
+          <i class="fa-solid fa-file-excel"></i> Generar Reporte Excel
         </button>
         <button class="btn-nuevo" onclick="abrirModalTipoServicio()">
           <i class="fa-solid fa-plus"></i> Nuevo Tipo de Servicio
@@ -130,7 +130,6 @@
         </div>
         <div class="modal-body">
           <form class="form-reporte">
-            <input type="hidden" id="reporte-tipo" value="todos" />
             <div class="form-grupo">
               <label>Rango de fechas</label>
               <div class="date-range">
@@ -157,37 +156,24 @@
               </div>
             </div>
             <div class="form-grupo">
-              <label>Formato del reporte</label>
-              <div class="radio-group">
-                <label class="radio-label">
-                  <input type="radio" name="formato" value="excel" checked />
-                  <span class="radio-text"
-                    ><i class="fa-solid fa-file-excel"></i> Excel</span
-                  >
-                </label>
-                <label class="radio-label">
-                  <input type="radio" name="formato" value="pdf" />
-                  <span class="radio-text"
-                    ><i class="fa-solid fa-file-pdf"></i> PDF</span
-                  >
-                </label>
-              </div>
-            </div>
-            <div class="form-grupo">
-              <label>Incluir en el reporte</label>
-              <div class="checkbox-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="incluir-cliente" checked />
-                  <span class="checkbox-text">Datos del cliente</span>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" id="incluir-habitacion" checked />
-                  <span class="checkbox-text">Información de habitación</span>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" id="incluir-empleado" checked />
-                  <span class="checkbox-text">Empleado asignado</span>
-                </label>
+              <label>Información incluida en el reporte Excel</label>
+              <div class="info-reporte">
+                <div class="info-item">
+                  <i class="fa-solid fa-check"></i>
+                  <span>Detalles del servicio (ID, nombre, tipo)</span>
+                </div>
+                <div class="info-item">
+                  <i class="fa-solid fa-check"></i>
+                  <span>Información del cliente</span>
+                </div>
+                <div class="info-item">
+                  <i class="fa-solid fa-check"></i>
+                  <span>Datos de habitación y fechas</span>
+                </div>
+                <div class="info-item">
+                  <i class="fa-solid fa-check"></i>
+                  <span>Estado de entrega y cantidad</span>
+                </div>
               </div>
             </div>
           </form>
@@ -197,7 +183,7 @@
             Cancelar
           </button>
           <button class="btn-generar" onclick="generarReporte()">
-            <i class="fa-solid fa-file-export"></i> Generar Reporte
+            <i class="fa-solid fa-file-excel"></i> Generar Excel
           </button>
         </div>
       </div>

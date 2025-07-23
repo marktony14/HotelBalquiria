@@ -628,6 +628,37 @@
   box-shadow: 0 6px 16px rgba(108, 62, 182, 0.4);
 }
 
+.btn-generar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estilos para información del reporte */
+.info-reporte {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  background: #f8f9ff;
+  padding: 16px;
+  border-radius: 10px;
+  border-left: 4px solid var(--verde);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.info-item i {
+  color: var(--verde);
+  font-size: 1rem;
+}
+
 @media (max-width: 768px) {
   .gestion-header {
     flex-direction: column;

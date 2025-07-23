@@ -1073,7 +1073,7 @@ async function cargarDatosServicio(id) {
     }
   } catch (error) {
     console.error("Error al cargar datos del servicio:", error);
-    alert("Error al cargar los datos del servicio: " + error.message);
+    //alert("Error al cargar los datos del servicio: " + error.message);
   }
 }
 
@@ -1106,14 +1106,14 @@ async function guardarServicio() {
     }
 
     if (!descripcion) {
-      alert("El nombre del servicio es obligatorio");
+      //alert("El nombre del servicio es obligatorio");
       return;
     }
 
     if (!tipo) {
-      alert(
-        "Debe seleccionar un tipo de servicio antes de agregar un servicio"
-      );
+      //alert(
+       // "Debe seleccionar un tipo de servicio antes de agregar un servicio"
+      //);
       return;
     }
 
@@ -1140,10 +1140,10 @@ async function guardarServicio() {
     cerrarModalServicio();
     // Recargar los servicios del tipo actual
     cargarServiciosPorTipo(tipo);
-    alert("Servicio guardado correctamente");
+    //alert("Servicio guardado correctamente");
   } catch (error) {
     console.error("Error al guardar servicio:", error);
-    alert("Error al guardar el servicio: " + error.message);
+    //alert("Error al guardar el servicio: " + error.message);
   }
 }
 
@@ -1188,10 +1188,10 @@ async function cambiarEstadoServicio(id, nuevoEstado) {
     }
 
     const estadoTexto = nuevoEstado ? "activado" : "desactivado";
-    alert(`Servicio ${estadoTexto} correctamente`);
+    //alert(`Servicio ${estadoTexto} correctamente`);
   } catch (error) {
     console.error("Error al cambiar estado del servicio:", error);
-    alert("Error al cambiar el estado del servicio: " + error.message);
+    //alert("Error al cambiar el estado del servicio: " + error.message);
   }
 }
 
@@ -1223,9 +1223,9 @@ async function eliminarServicio(id) {
     if (data && data.length > 0) {
       // Tiene solicitudes, solo desactivarlo
       await cambiarEstadoServicio(id, false);
-      alert(
-        "El servicio tiene solicitudes asociadas. Se ha desactivado en lugar de eliminarse."
-      );
+      //alert(
+      //  "El servicio tiene solicitudes asociadas. Se ha desactivado en lugar de eliminarse."
+      //);
       return;
     }
 
@@ -1258,16 +1258,15 @@ async function eliminarServicio(id) {
       }
     }
 
-    alert("Servicio eliminado correctamente");
+    //alert("Servicio eliminado correctamente");
   } catch (error) {
     console.error("Error al eliminar servicio:", error);
-    alert("Error al eliminar el servicio: " + error.message);
+    //alert("Error al eliminar el servicio: " + error.message);
   }
 }
 
 // Funciones para modal de reporte
-function abrirModalReporte(tipo = "todos") {
-  document.getElementById("reporte-tipo").value = tipo;
+function abrirModalReporte() {
   document.getElementById("modalReporte").style.display = "flex";
 }
 
@@ -1279,213 +1278,197 @@ async function generarReporte() {
   try {
     const fechaDesde = document.getElementById("fecha-desde").value;
     const fechaHasta = document.getElementById("fecha-hasta").value;
-    const formato = document.querySelector(
-      'input[name="formato"]:checked'
-    ).value;
-    const incluirCliente = document.getElementById("incluir-cliente").checked;
-    const incluirHabitacion =
-      document.getElementById("incluir-habitacion").checked;
-    const incluirEmpleado = document.getElementById("incluir-empleado").checked;
 
     if (!fechaDesde || !fechaHasta) {
-      alert("Por favor seleccione un rango de fechas");
+      //alert("Por favor seleccione un rango de fechas");
       return;
     }
 
     if (new Date(fechaDesde) > new Date(fechaHasta)) {
-      alert("La fecha desde no puede ser mayor que la fecha hasta");
+      //alert("La fecha desde no puede ser mayor que la fecha hasta");
       return;
     }
 
-    // Obtener datos de servicios solicitados en el rango de fechas
-    const { data: serviciosSolicitados, error } = await supabase
-      .from("servicios_solicitados")
-      .select(
-        `
-        id,
-        cantidad,
-        estado,
-        created_at,
-        servicios:servicios(descripcion, tipo_servicio, precio),
-        alojamiento:alojamientos(id_habitacion, fecha_alojamiento, id_cliente)
-      `
-      )
-      .gte("created_at", fechaDesde)
-      .lte("created_at", fechaHasta + "T23:59:59")
-      .order("created_at", { ascending: false });
+    // Mostrar mensaje de carga
+    const btnGenerar = document.querySelector(".btn-generar");
+    const textoOriginal = btnGenerar.innerHTML;
+    btnGenerar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
+    btnGenerar.disabled = true;
 
-    if (error) throw error;
+    try {
+      // Obtener servicios solicitados en el rango de fechas
+      const { data: serviciosSolicitados, error } = await supabase
+        .from("servicios_solicitados")
+        .select(`
+          id,
+          cantidad,
+          estado,
+          created_at,
+          id_servicio,
+          id_alojamiento
+        `)
+        .gte("created_at", fechaDesde)
+        .lte("created_at", fechaHasta + "T23:59:59")
+        .order("id", { ascending: true });
 
-    if (!serviciosSolicitados || serviciosSolicitados.length === 0) {
-      alert(
-        "No se encontraron servicios solicitados en el rango de fechas seleccionado"
-      );
-      return;
-    }
+      if (error) throw error;
 
-    // Obtener datos adicionales si están seleccionados
-    let datosClientes = {};
-    if (incluirCliente) {
-      const clientesIds = [
-        ...new Set(
-          serviciosSolicitados
-            .map((s) => s.alojamiento?.id_cliente)
-            .filter(Boolean)
-        ),
-      ];
-      if (clientesIds.length > 0) {
-        const { data: clientes } = await supabase
-          .from("clientes")
-          .select("nro_doc, nombre, apellido, telefono")
-          .in("nro_doc", clientesIds);
-
-        if (clientes) {
-          clientes.forEach((cliente) => {
-            datosClientes[cliente.nro_doc] = cliente;
-          });
-        }
+      if (!serviciosSolicitados || serviciosSolicitados.length === 0) {
+        //alert("No se encontraron servicios solicitados en el rango de fechas seleccionado");
+        return;
       }
-    }
 
-    // Generar contenido del reporte
-    let contenidoReporte = "";
-    let titulo = `Reporte de Servicios Solicitados - ${fechaDesde} al ${fechaHasta}`;
+      // Obtener IDs únicos para consultas relacionadas
+      const serviciosIds = [...new Set(serviciosSolicitados.map(s => s.id_servicio).filter(Boolean))];
+      const alojamientosIds = [...new Set(serviciosSolicitados.map(s => s.id_alojamiento).filter(Boolean))];
 
-    if (formato === "excel") {
-      // Generar CSV para Excel
-      let csv = "data:text/csv;charset=utf-8,";
-      csv += "ID,Servicio,Tipo,Cantidad,Estado,Fecha Solicitud";
+      // Obtener datos de servicios
+      const { data: servicios } = await supabase
+        .from("servicios")
+        .select("id, descripcion, tipo_servicio, precio")
+        .in("id", serviciosIds);
 
-      if (incluirHabitacion) csv += ",Habitación,Fecha Alojamiento";
-      if (incluirCliente) csv += ",Cliente,Teléfono";
-      csv += "\n";
+      // Obtener datos de alojamientos con habitaciones
+      const { data: alojamientos } = await supabase
+        .from("alojamientos")
+        .select(`
+          id,
+          id_habitacion,
+          id_cliente,
+          fecha_alojamiento,
+          fecha_alojamiento_vencimiento
+        `)
+        .in("id", alojamientosIds);
 
-      serviciosSolicitados.forEach((servicio) => {
-        const fecha = new Date(servicio.created_at).toLocaleDateString();
-        const estado = servicio.estado ? "Entregado" : "Pendiente";
+      // Obtener códigos de habitaciones
+      const habitacionIds = [...new Set(alojamientos?.map(a => a.id_habitacion).filter(Boolean) || [])];
+      const { data: habitaciones } = await supabase
+        .from("habitaciones")
+        .select("codigo_habitacion")
+        .in("codigo_habitacion", habitacionIds);
 
-        csv += `${servicio.id},`;
-        csv += `"${servicio.servicios?.descripcion || "N/A"}",`;
-        csv += `"${servicio.servicios?.tipo_servicio || "N/A"}",`;
-        csv += `${servicio.cantidad || 0},`;
-        csv += `"${estado}",`;
-        csv += `"${fecha}"`;
+      // Obtener datos de clientes
+      const clienteIds = [...new Set(alojamientos?.map(a => a.id_cliente).filter(Boolean) || [])];
+      const { data: clientes } = await supabase
+        .from("clientes")
+        .select(`
+          nro_doc,
+          nombre,
+          apellido,
+          tipo_documento,
+          numero_telefono,
+          correo
+        `)
+        .in("nro_doc", clienteIds);
 
-        if (incluirHabitacion) {
-          csv += `,"${servicio.alojamiento?.id_habitacion || "N/A"}"`;
-          csv += `,"${servicio.alojamiento?.fecha_alojamiento || "N/A"}"`;
-        }
+      // Crear mapas para búsqueda rápida
+      const serviciosMap = {};
+      servicios?.forEach(s => serviciosMap[s.id] = s);
 
-        if (incluirCliente) {
-          const cliente = datosClientes[servicio.alojamiento?.id_cliente];
-          const nombreCompleto = cliente
-            ? `${cliente.nombre} ${cliente.apellido}`
-            : "N/A";
-          csv += `,"${nombreCompleto}"`;
-          csv += `,"${cliente?.telefono || "N/A"}"`;
-        }
+      const alojamientosMap = {};
+      alojamientos?.forEach(a => alojamientosMap[a.id] = a);
 
-        csv += "\n";
+      const habitacionesMap = {};
+      habitaciones?.forEach(h => habitacionesMap[h.codigo_habitacion] = h);
+
+      const clientesMap = {};
+      clientes?.forEach(c => clientesMap[c.nro_doc] = c);
+
+      // Preparar datos para Excel siguiendo la estructura de la consulta SQL
+      const datosExcel = serviciosSolicitados.map(item => {
+        const fecha = new Date(item.created_at);
+        const fechaFormateada = fecha.toLocaleDateString('es-PE');
+        const horaFormateada = fecha.toLocaleTimeString('es-PE');
+        const servicioRealizado = item.estado ? "SÍ" : "NO";
+        
+        // Obtener datos relacionados
+        const servicio = serviciosMap[item.id_servicio] || {};
+        const alojamiento = alojamientosMap[item.id_alojamiento] || {};
+        const habitacion = habitacionesMap[alojamiento.id_habitacion] || {};
+        const cliente = clientesMap[alojamiento.id_cliente] || {};
+        
+        // Calcular total
+        const precio = servicio.precio || 0;
+        const cantidad = item.cantidad || 1;
+        const total = cantidad * precio;
+
+        return {
+          'ID Solicitud': item.id,
+          'Documento Cliente': cliente.nro_doc || "N/A",
+          'Nombre': cliente.nombre || "N/A",
+          'Apellido': cliente.apellido || "N/A",
+          'Tipo Documento': cliente.tipo_documento || "N/A",
+          'Teléfono': cliente.numero_telefono || "N/A",
+          'Correo': cliente.correo || "N/A",
+          'Servicio': servicio.descripcion || "N/A",
+          'Tipo de Servicio': servicio.tipo_servicio || "N/A",
+          'Cantidad': cantidad,
+          'Precio Unitario': precio ? `S/. ${precio.toFixed(2)}` : "S/. 0.00",
+          'Total': `S/. ${total.toFixed(2)}`,
+          'Código Habitación': alojamiento.id_habitacion || "N/A",
+          'Fecha Alojamiento': alojamiento.fecha_alojamiento || "N/A",
+          'Fecha Vencimiento': alojamiento.fecha_alojamiento_vencimiento || "N/A",
+          'Servicio Realizado': servicioRealizado,
+          'Fecha Solicitud': fechaFormateada,
+          'Hora Solicitud': horaFormateada
+        };
       });
 
-      // Descargar archivo CSV
-      const encodedUri = encodeURI(csv);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute(
-        "download",
-        `reporte_servicios_${fechaDesde}_${fechaHasta}.csv`
-      );
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      // Generar reporte HTML para vista previa (simulando PDF)
-      let html = `
-        <html>
-        <head>
-          <title>${titulo}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h1 { color: #9316c0; text-align: center; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; font-weight: bold; }
-            .estado-entregado { color: #16c093; font-weight: bold; }
-            .estado-pendiente { color: #ff9900; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <h1>${titulo}</h1>
-          <p><strong>Total de servicios:</strong> ${
-            serviciosSolicitados.length
-          }</p>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Servicio</th>
-                <th>Tipo</th>
-                <th>Cantidad</th>
-                <th>Estado</th>
-                <th>Fecha</th>
-                ${incluirHabitacion ? "<th>Habitación</th>" : ""}
-                ${incluirCliente ? "<th>Cliente</th>" : ""}
-              </tr>
-            </thead>
-            <tbody>
-      `;
+      // Crear libro de Excel con SheetJS
+      const libro = XLSX.utils.book_new();
+      const hoja = XLSX.utils.json_to_sheet(datosExcel);
 
-      serviciosSolicitados.forEach((servicio) => {
-        const fecha = new Date(servicio.created_at).toLocaleDateString();
-        const estado = servicio.estado ? "Entregado" : "Pendiente";
-        const estadoClass = servicio.estado
-          ? "estado-entregado"
-          : "estado-pendiente";
+      // Configurar ancho de columnas
+      const anchos = [
+        { wch: 12 }, // ID Solicitud
+        { wch: 15 }, // Documento Cliente
+        { wch: 20 }, // Nombre
+        { wch: 20 }, // Apellido
+        { wch: 12 }, // Tipo Documento
+        { wch: 15 }, // Teléfono
+        { wch: 25 }, // Correo
+        { wch: 25 }, // Servicio
+        { wch: 20 }, // Tipo de Servicio
+        { wch: 10 }, // Cantidad
+        { wch: 15 }, // Precio Unitario
+        { wch: 15 }, // Total
+        { wch: 18 }, // Código Habitación
+        { wch: 18 }, // Fecha Alojamiento
+        { wch: 18 }, // Fecha Vencimiento
+        { wch: 18 }, // Servicio Realizado
+        { wch: 15 }, // Fecha Solicitud
+        { wch: 15 }  // Hora Solicitud
+      ];
+      hoja['!cols'] = anchos;
 
-        html += `
-          <tr>
-            <td>${servicio.id}</td>
-            <td>${servicio.servicios?.descripcion || "N/A"}</td>
-            <td>${servicio.servicios?.tipo_servicio || "N/A"}</td>
-            <td>${servicio.cantidad || 0}</td>
-            <td class="${estadoClass}">${estado}</td>
-            <td>${fecha}</td>
-        `;
+      // Agregar hoja al libro
+      XLSX.utils.book_append_sheet(libro, hoja, "Servicios Solicitados");
 
-        if (incluirHabitacion) {
-          html += `<td>${servicio.alojamiento?.id_habitacion || "N/A"}</td>`;
-        }
+      // Generar nombre del archivo
+      const nombreArchivo = `reporte_servicios_${fechaDesde}_${fechaHasta}.xlsx`;
 
-        if (incluirCliente) {
-          const cliente = datosClientes[servicio.alojamiento?.id_cliente];
-          const nombreCompleto = cliente
-            ? `${cliente.nombre} ${cliente.apellido}`
-            : "N/A";
-          html += `<td>${nombreCompleto}</td>`;
-        }
+      // Descargar archivo
+      XLSX.writeFile(libro, nombreArchivo);
 
-        html += "</tr>";
-      });
+      cerrarModalReporte();
+      //alert(`Reporte Excel generado exitosamente: ${nombreArchivo}\nTotal de registros: ${serviciosSolicitados.length}`);
 
-      html += `
-            </tbody>
-          </table>
-        </body>
-        </html>
-      `;
-
-      // Abrir en nueva ventana para vista previa
-      const newWindow = window.open("", "_blank");
-      newWindow.document.write(html);
-      newWindow.document.close();
+    } finally {
+      // Restaurar botón
+      btnGenerar.innerHTML = textoOriginal;
+      btnGenerar.disabled = false;
     }
 
-    cerrarModalReporte();
-    alert(`Reporte generado exitosamente en formato ${formato.toUpperCase()}`);
   } catch (error) {
     console.error("Error al generar reporte:", error);
-    alert("Error al generar el reporte: " + error.message);
+    //alert("Error al generar el reporte: " + error.message);
+    
+    // Restaurar botón en caso de error
+    const btnGenerar = document.querySelector(".btn-generar");
+    if (btnGenerar) {
+      btnGenerar.innerHTML = '<i class="fa-solid fa-file-excel"></i> Generar Excel';
+      btnGenerar.disabled = false;
+    }
   }
 }
 
@@ -1507,7 +1490,7 @@ async function cambiarEstadoTipoServicio(tipo, nuevoEstado) {
     cargarTiposServicio();
   } catch (error) {
     console.error("Error al cambiar estado del tipo de servicio:", error);
-    alert("Error al cambiar el estado del tipo de servicio: " + error.message);
+    //alert("Error al cambiar el estado del tipo de servicio: " + error.message);
   }
 }
 
@@ -1532,9 +1515,9 @@ async function eliminarTipoServicio(tipo) {
     if (data && data.length > 0) {
       // Tiene servicios, solo desactivarlo
       await cambiarEstadoTipoServicio(tipo, false);
-      alert(
-        "El tipo de servicio tiene servicios asociados. Se ha desactivado en lugar de eliminarse."
-      );
+      //alert(
+      //  "El tipo de servicio tiene servicios asociados. Se ha desactivado en lugar de eliminarse."
+      //);
       return;
     }
 
@@ -1595,7 +1578,7 @@ async function cargarDatosTipoServicio(tipo) {
     document.getElementById("tipo-imagen").value = data.imagen || "";
   } catch (error) {
     console.error("Error al cargar datos del tipo de servicio:", error);
-    alert("Error al cargar los datos del tipo de servicio: " + error.message);
+    //alert("Error al cargar los datos del tipo de servicio: " + error.message);
   }
 }
 
@@ -1606,12 +1589,12 @@ async function guardarTipoServicio() {
     const imagen = document.getElementById("tipo-imagen").value;
 
     if (!nombre) {
-      alert("El nombre del tipo de servicio es obligatorio");
+      //alert("El nombre del tipo de servicio es obligatorio");
       return;
     }
 
     if (!imagen) {
-      alert("La URL de la imagen es obligatoria");
+      //alert("La URL de la imagen es obligatoria");
       return;
     }
 
@@ -1638,10 +1621,10 @@ async function guardarTipoServicio() {
 
     cerrarModalTipoServicio();
     cargarTiposServicio();
-    alert("Tipo de servicio guardado correctamente");
+    //alert("Tipo de servicio guardado correctamente");
   } catch (error) {
     console.error("Error al guardar tipo de servicio:", error);
-    alert("Error al guardar el tipo de servicio: " + error.message);
+    //alert("Error al guardar el tipo de servicio: " + error.message);
   }
 }
 

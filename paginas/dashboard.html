@@ -1,24 +1,26 @@
 <link rel="stylesheet" href="estilos/dashboard.css" />
-<div class="dashboard-nuevo">
-  <div class="dashboard-header">
-    <h2 class="dashboard-titulo">DASHBOARD GENERAL DEL HOTEL</h2>
+<main>
+  <div class="dashboard-nuevo">
+    <div class="dashboard-header">
+      <h2 class="dashboard-titulo">DASHBOARD GENERAL DEL HOTEL</h2>
+    </div>
+    <div class="dashboard-graficos">
+      <div class="dashboard-card">
+        <h3>RESERVAS REALIZADAS POR DÍA</h3>
+        <canvas id="graficoReservas"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <h3>SERVICIOS SOLICITADOS DURANTE LA SEMANA</h3>
+        <canvas id="graficoServicios"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <h3>INGRESOS GENERADOS POR DÍA (S/.)</h3>
+        <canvas id="graficoIngresos"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <h3>RESERVAS POR TIPO DE HABITACIÓN</h3>
+        <canvas id="graficoHabitaciones"></canvas>
+      </div>
+    </div>
   </div>
-  <div class="dashboard-graficos">
-    <div class="dashboard-card">
-      <h3>RESERVAS REALIZADAS POR DÍA</h3>
-      <canvas id="graficoReservas"></canvas>
-    </div>
-    <div class="dashboard-card">
-      <h3>SERVICIOS SOLICITADOS DURANTE LA SEMANA</h3>
-      <canvas id="graficoServicios"></canvas>
-    </div>
-    <div class="dashboard-card">
-      <h3>INGRESOS GENERADOS POR DÍA (S/.)</h3>
-      <canvas id="graficoIngresos"></canvas>
-    </div>
-    <div class="dashboard-card">
-      <h3>RESERVAS POR TIPO DE HABITACIÓN</h3>
-      <canvas id="graficoHabitaciones"></canvas>
-    </div>
-  </div>
-</div>
+</main>

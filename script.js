@@ -406,17 +406,397 @@ document.addEventListener("DOMContentLoaded", function () {
   cargarPagina("inicio");
 });
 
-// Funciones para gestión de habitaciones (solo visual)
-function inicializarGestionHabitaciones() {
-  console.log("Gestión de habitaciones inicializada");
+// Función para mostrar notificaciones sin alert
+function mostrarNotificacion(mensaje, tipo = "info") {
+  // Crear el contenedor de notificación si no existe
+  let contenedor = document.getElementById("notificaciones-container");
+  if (!contenedor) {
+    contenedor = document.createElement("div");
+    contenedor.id = "notificaciones-container";
+    contenedor.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      max-width: 400px;
+      pointer-events: none;
+    `;
+    document.body.appendChild(contenedor);
+  }
+
+  // Crear la notificación
+  const notificacion = document.createElement("div");
+  notificacion.style.cssText = `
+    background: ${tipo === "error" ? "#fee2e2" : tipo === "exito" ? "#dcfce7" : "#dbeafe"};
+    color: ${tipo === "error" ? "#dc2626" : tipo === "exito" ? "#16a34a" : "#2563eb"};
+    border: 1px solid ${tipo === "error" ? "#fecaca" : tipo === "exito" ? "#bbf7d0" : "#bfdbfe"};
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+  `;
+
+  const icono = tipo === "error" ? "fa-exclamation-circle" : tipo === "exito" ? "fa-check-circle" : "fa-info-circle";
+  notificacion.innerHTML = `
+    <i class="fa-solid ${icono}"></i>
+    <span>${mensaje}</span>
+    <button onclick="this.parentElement.remove()" style="
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+      margin-left: auto;
+      font-size: 16px;
+    ">
+      <i class="fa-solid fa-times"></i>
+    </button>
+  `;
+
+  contenedor.appendChild(notificacion);
+
+  // Animar entrada
+  setTimeout(() => {
+    notificacion.style.transform = "translateX(0)";
+  }, 100);
+
+  // Auto-remover después de 5 segundos
+  setTimeout(() => {
+    if (notificacion.parentElement) {
+      notificacion.style.transform = "translateX(100%)";
+      setTimeout(() => {
+        if (notificacion.parentElement) {
+          notificacion.remove();
+        }
+      }, 300);
+    }
+  }, 5000);
 }
 
-function abrirModalHabitacion() {
+// Funciones para gestión de habitaciones
+function inicializarGestionHabitaciones() {
+  console.log("Gestión de habitaciones inicializada");
+  cargarHabitacionesGestion();
+  
+  // Agregar eventos de filtros
+  const inputBuscar = document.querySelector('.input-buscar');
+  const selectTipo = document.querySelectorAll('.select-filtro')[0];
+  const selectPiso = document.querySelectorAll('.select-filtro')[1];
+  
+  if (inputBuscar) {
+    inputBuscar.addEventListener('input', aplicarFiltrosHabitaciones);
+  }
+  if (selectTipo) {
+    selectTipo.addEventListener('change', aplicarFiltrosHabitaciones);
+  }
+  if (selectPiso) {
+    selectPiso.addEventListener('change', aplicarFiltrosHabitaciones);
+  }
+}
+
+async function cargarHabitacionesGestion() {
+  try {
+    if (!supabase) {
+      console.error("Supabase no está inicializado");
+      return;
+    }
+
+    const { data: habitaciones, error } = await supabase
+      .from("habitaciones")
+      .select("*")
+      .order("codigo_habitacion", { ascending: true });
+
+    if (error) throw error;
+
+    // Obtener alojamientos para determinar el estado de las habitaciones
+    const { data: alojamientos } = await supabase
+      .from("alojamientos")
+      .select("id_habitacion, estado_reserva, fecha_alojamiento, fecha_alojamiento_vencimiento");
+
+    // Crear mapa de estados de habitaciones
+    const estadosHabitaciones = {};
+    const hoy = new Date().toISOString().split('T')[0];
+    
+    if (alojamientos) {
+      alojamientos.forEach(aloj => {
+        if (aloj.estado_reserva === 'ALOJADO' && 
+            aloj.fecha_alojamiento <= hoy && 
+            aloj.fecha_alojamiento_vencimiento >= hoy) {
+          estadosHabitaciones[aloj.id_habitacion] = 'ocupada';
+        }
+      });
+    }
+
+    const cardsContainer = document.querySelector('.cards-container');
+    if (cardsContainer) {
+      cardsContainer.innerHTML = '';
+
+      if (habitaciones && habitaciones.length > 0) {
+        habitaciones.forEach(habitacion => {
+          const estado = estadosHabitaciones[habitacion.codigo_habitacion] || 'disponible';
+          const estadoTexto = estado === 'ocupada' ? 'Ocupada' : 'Disponible';
+          const imagenPrincipal = (habitacion.imagenes && Array.isArray(habitacion.imagenes) && habitacion.imagenes.length > 0) 
+            ? habitacion.imagenes[0] 
+            : 'img/hotel-icono.png';
+
+          const card = document.createElement('div');
+          card.className = 'habitacion-card';
+          card.setAttribute('data-codigo', habitacion.codigo_habitacion);
+          card.setAttribute('data-tipo', habitacion.tipo);
+          card.setAttribute('data-piso', habitacion.piso);
+
+          card.innerHTML = `
+            <div class="card-imagen">
+              <img src="${imagenPrincipal}" alt="Habitación ${habitacion.codigo_habitacion}" onerror="this.src='img/hotel-icono.png'">
+              <div class="card-estado ${estado}">${estadoTexto}</div>
+            </div>
+            <div class="card-content">
+              <h3 class="card-codigo">${habitacion.codigo_habitacion}</h3>
+              <div class="card-detalles">
+                <span class="detalle"><i class="fa-solid fa-bed"></i> ${habitacion.tipo || 'Sin tipo'}</span>
+                <span class="detalle"><i class="fa-solid fa-building"></i> Piso ${habitacion.piso || 'N/A'}</span>
+                <span class="detalle"><i class="fa-solid fa-dollar-sign"></i> S/. ${habitacion.precio_dia ? habitacion.precio_dia.toFixed(2) : '0.00'}</span>
+              </div>
+              <p class="card-descripcion">
+                ${habitacion.description || 'Sin descripción disponible'}
+              </p>
+              <div class="card-acciones">
+                <button class="btn-editar" onclick="editarHabitacion('${habitacion.codigo_habitacion}')">
+                  <i class="fa-solid fa-edit"></i> Editar
+                </button>
+                <button class="btn-eliminar" onclick="eliminarHabitacion('${habitacion.codigo_habitacion}')">
+                  <i class="fa-solid fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          `;
+
+          cardsContainer.appendChild(card);
+        });
+      } else {
+        cardsContainer.innerHTML = `
+          <div class="mensaje-vacio" style="grid-column: 1 / -1; text-align: center; padding: 48px 24px; color: #666;">
+            <i class="fa-solid fa-bed" style="font-size: 3rem; color: var(--gris-claro); margin-bottom: 16px;"></i>
+            <h3 style="color: var(--negro); margin-bottom: 8px;">No hay habitaciones registradas</h3>
+            <p>Comience agregando una nueva habitación</p>
+            <button class="btn-nuevo" onclick="abrirModalHabitacion()" style="margin-top: 16px; background: var(--morado); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+              <i class="fa-solid fa-plus"></i> Nueva Habitación
+            </button>
+          </div>
+        `;
+      }
+    }
+  } catch (error) {
+    console.error("Error al cargar habitaciones:", error);
+    const cardsContainer = document.querySelector('.cards-container');
+    if (cardsContainer) {
+      cardsContainer.innerHTML = `
+        <div class="mensaje-error" style="grid-column: 1 / -1; text-align: center; padding: 48px 24px; background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.1); border-radius: 12px; color: #666;">
+          <i class="fa-solid fa-exclamation-triangle" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 16px;"></i>
+          <h3 style="color: var(--negro); margin-bottom: 8px;">Error al cargar habitaciones</h3>
+          <p>${error.message}</p>
+          <button class="btn-recargar" onclick="cargarHabitacionesGestion()" style="margin-top: 16px; background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            <i class="fa-solid fa-refresh"></i> Reintentar
+          </button>
+        </div>
+      `;
+    }
+  }
+}
+
+function aplicarFiltrosHabitaciones() {
+  const inputBuscar = document.querySelector('.input-buscar');
+  const selectTipo = document.querySelectorAll('.select-filtro')[0];
+  const selectPiso = document.querySelectorAll('.select-filtro')[1];
+  
+  const textoBusqueda = inputBuscar ? inputBuscar.value.toLowerCase() : '';
+  const tipoFiltro = selectTipo ? selectTipo.value.toLowerCase() : '';
+  const pisoFiltro = selectPiso ? selectPiso.value : '';
+  
+  const cards = document.querySelectorAll('.habitacion-card');
+  
+  cards.forEach(card => {
+    const codigo = card.getAttribute('data-codigo').toLowerCase();
+    const tipo = card.getAttribute('data-tipo').toLowerCase();
+    const piso = card.getAttribute('data-piso');
+    
+    const coincideCodigo = !textoBusqueda || codigo.includes(textoBusqueda);
+    const coincideTipo = !tipoFiltro || tipo.includes(tipoFiltro);
+    const coincidePiso = !pisoFiltro || piso === pisoFiltro;
+    
+    card.style.display = (coincideCodigo && coincideTipo && coincidePiso) ? '' : 'none';
+  });
+}
+
+function abrirModalHabitacion(codigoHabitacion = null) {
+  if (codigoHabitacion) {
+    document.getElementById("habitacion-codigo").value = codigoHabitacion;
+    document.querySelector("#modalHabitacion .modal-header h3").textContent = "Editar Habitación";
+    cargarDatosHabitacion(codigoHabitacion);
+  } else {
+    limpiarFormularioHabitacion();
+    document.querySelector("#modalHabitacion .modal-header h3").textContent = "Nueva Habitación";
+  }
+  
   document.getElementById("modalHabitacion").style.display = "flex";
+}
+
+function editarHabitacion(codigoHabitacion) {
+  abrirModalHabitacion(codigoHabitacion);
 }
 
 function cerrarModalHabitacion() {
   document.getElementById("modalHabitacion").style.display = "none";
+}
+
+function limpiarFormularioHabitacion() {
+  document.getElementById("habitacion-codigo-original").value = "";
+  document.getElementById("habitacion-codigo").value = "";
+  document.getElementById("habitacion-tipo").value = "";
+  document.getElementById("habitacion-piso").value = "";
+  document.getElementById("habitacion-precio").value = "";
+  document.getElementById("habitacion-descripcion").value = "";
+  document.getElementById("habitacion-imagenes").value = "";
+}
+
+async function cargarDatosHabitacion(codigoHabitacion) {
+  try {
+    const { data, error } = await supabase
+      .from("habitaciones")
+      .select("*")
+      .eq("codigo_habitacion", codigoHabitacion)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById("habitacion-codigo-original").value = data.codigo_habitacion || "";
+    document.getElementById("habitacion-codigo").value = data.codigo_habitacion || "";
+    document.getElementById("habitacion-tipo").value = data.tipo || "";
+    document.getElementById("habitacion-piso").value = data.piso || "";
+    document.getElementById("habitacion-precio").value = data.precio_dia || "";
+    document.getElementById("habitacion-descripcion").value = data.description || "";
+    
+    // Para las imágenes, mostrar como URLs separadas por comas
+    if (data.imagenes && Array.isArray(data.imagenes)) {
+      document.getElementById("habitacion-imagenes").value = data.imagenes.join(', ');
+    }
+  } catch (error) {
+    console.error("Error al cargar datos de la habitación:", error);
+  }
+}
+
+async function guardarHabitacion() {
+  try {
+    const codigoOriginal = document.getElementById("habitacion-codigo-original").value;
+    const codigo = document.getElementById("habitacion-codigo").value;
+    const tipo = document.getElementById("habitacion-tipo").value;
+    const piso = document.getElementById("habitacion-piso").value;
+    const precio = document.getElementById("habitacion-precio").value;
+    const descripcion = document.getElementById("habitacion-descripcion").value;
+    const imagenesStr = document.getElementById("habitacion-imagenes").value;
+
+    if (!codigo) {
+      mostrarNotificacion("El código de habitación es obligatorio", "error");
+      return;
+    }
+
+    if (!tipo) {
+      mostrarNotificacion("El tipo de habitación es obligatorio", "error");
+      return;
+    }
+
+    if (!piso) {
+      mostrarNotificacion("El piso es obligatorio", "error");
+      return;
+    }
+
+    if (!precio) {
+      mostrarNotificacion("El precio por día es obligatorio", "error");
+      return;
+    }
+
+    // Procesar imágenes: convertir string separado por comas a array
+    let imagenes = [];
+    if (imagenesStr.trim()) {
+      imagenes = imagenesStr.split(',').map(url => url.trim()).filter(url => url.length > 0);
+    }
+
+    const habitacion = {
+      codigo_habitacion: codigo,
+      tipo: tipo,
+      piso: parseInt(piso),
+      precio_dia: parseFloat(precio),
+      description: descripcion,
+      imagenes: imagenes.length > 0 ? imagenes : null
+    };
+
+    let result;
+    const esEdicion = codigoOriginal && codigoOriginal.trim() !== "";
+
+    if (esEdicion) {
+      // Actualizar habitación existente
+      result = await supabase
+        .from("habitaciones")
+        .update(habitacion)
+        .eq("codigo_habitacion", codigoOriginal);
+    } else {
+      // Crear nueva habitación
+      result = await supabase
+        .from("habitaciones")
+        .insert(habitacion);
+    }
+
+    if (result.error) throw result.error;
+
+    cerrarModalHabitacion();
+    cargarHabitacionesGestion();
+    mostrarNotificacion("Habitación guardada correctamente", "exito");
+  } catch (error) {
+    console.error("Error al guardar habitación:", error);
+    mostrarNotificacion("Error al guardar la habitación: " + error.message, "error");
+  }
+}
+
+async function eliminarHabitacion(codigoHabitacion) {
+  if (!confirm("¿Está seguro de eliminar esta habitación? Esta acción no se puede deshacer.")) {
+    return;
+  }
+
+  try {
+    // Verificar si la habitación tiene alojamientos asociados
+    const { data: alojamientos, error: errorCheck } = await supabase
+      .from("alojamientos")
+      .select("id")
+      .eq("id_habitacion", codigoHabitacion);
+
+    if (errorCheck) throw errorCheck;
+
+    if (alojamientos && alojamientos.length > 0) {
+      mostrarNotificacion("No se puede eliminar la habitación porque tiene alojamientos asociados.", "error");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("habitaciones")
+      .delete()
+      .eq("codigo_habitacion", codigoHabitacion);
+
+    if (error) throw error;
+
+    cargarHabitacionesGestion();
+    mostrarNotificacion("Habitación eliminada correctamente", "exito");
+  } catch (error) {
+    console.error("Error al eliminar habitación:", error);
+    mostrarNotificacion("Error al eliminar la habitación: " + error.message, "error");
+  }
 }
 
 // Funciones para gestión de servicios
@@ -1272,6 +1652,207 @@ function abrirModalReporte() {
 
 function cerrarModalReporte() {
   document.getElementById("modalReporte").style.display = "none";
+}
+
+// Funciones para modal de reporte de alojamientos
+function abrirModalReporteAlojamientos() {
+  // Establecer fecha actual como valor por defecto
+  const fechaHoy = new Date().toISOString().split("T")[0];
+  if (document.getElementById("fecha-desde-aloj")) {
+    document.getElementById("fecha-desde-aloj").value = fechaHoy;
+    document.getElementById("fecha-hasta-aloj").value = fechaHoy;
+  }
+  document.getElementById("modalReporteAlojamientos").style.display = "flex";
+}
+
+function cerrarModalReporteAlojamientos() {
+  document.getElementById("modalReporteAlojamientos").style.display = "none";
+}
+
+async function generarReporteAlojamientos() {
+  try {
+    const fechaDesde = document.getElementById("fecha-desde-aloj").value;
+    const fechaHasta = document.getElementById("fecha-hasta-aloj").value;
+
+    if (!fechaDesde || !fechaHasta) {
+      mostrarNotificacion("Por favor seleccione un rango de fechas", "error");
+      return;
+    }
+
+    if (new Date(fechaDesde) > new Date(fechaHasta)) {
+      mostrarNotificacion("La fecha desde no puede ser mayor que la fecha hasta", "error");
+      return;
+    }
+
+    // Mostrar mensaje de carga
+    const btnGenerar = document.querySelector(".btn-generar-aloj");
+    const textoOriginal = btnGenerar.innerHTML;
+    btnGenerar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
+    btnGenerar.disabled = true;
+
+    try {
+      // Obtener alojamientos en el rango de fechas
+      const { data: alojamientos, error: errorAloj } = await supabase
+        .from("alojamientos")
+        .select("*")
+        .gte("fecha_alojamiento", fechaDesde)
+        .lte("fecha_alojamiento", fechaHasta)
+        .order("fecha_alojamiento", { ascending: false });
+
+      if (errorAloj) throw errorAloj;
+
+      if (!alojamientos || alojamientos.length === 0) {
+        mostrarNotificacion("No se encontraron alojamientos en el rango de fechas seleccionado", "error");
+        return;
+      }
+
+      // Obtener IDs únicos para consultas relacionadas
+      const clientesIds = [...new Set(alojamientos.map(a => a.id_cliente).filter(Boolean))];
+      const habitacionesIds = [...new Set(alojamientos.map(a => a.id_habitacion).filter(Boolean))];
+      const alojamientosIds = alojamientos.map(a => a.id);
+
+      // Obtener datos de clientes
+      const { data: clientes } = await supabase
+        .from("clientes")
+        .select("*")
+        .in("nro_doc", clientesIds);
+
+      // Obtener datos de habitaciones
+      const { data: habitaciones } = await supabase
+        .from("habitaciones")
+        .select("*")
+        .in("codigo_habitacion", habitacionesIds);
+
+      // Obtener servicios solicitados por alojamiento
+      const { data: serviciosSolicitados } = await supabase
+        .from("servicios_solicitados")
+        .select(`
+          id_alojamiento,
+          cantidad,
+          id_servicio,
+          servicios:servicios(precio)
+        `)
+        .in("id_alojamiento", alojamientosIds);
+
+      // Crear mapas para búsqueda rápida
+      const clientesMap = {};
+      clientes?.forEach(c => clientesMap[c.nro_doc] = c);
+
+      const habitacionesMap = {};
+      habitaciones?.forEach(h => habitacionesMap[h.codigo_habitacion] = h);
+
+      // Calcular servicios por alojamiento
+      const serviciosPorAlojamiento = {};
+      serviciosSolicitados?.forEach(ss => {
+        if (!serviciosPorAlojamiento[ss.id_alojamiento]) {
+          serviciosPorAlojamiento[ss.id_alojamiento] = {
+            cantidad: 0,
+            total: 0
+          };
+        }
+        serviciosPorAlojamiento[ss.id_alojamiento].cantidad += 1;
+        serviciosPorAlojamiento[ss.id_alojamiento].total += (ss.cantidad || 1) * (ss.servicios?.precio || 0);
+      });
+
+      // Preparar datos para Excel siguiendo la estructura de la consulta SQL
+      const datosExcel = alojamientos.map(alojamiento => {
+        const cliente = clientesMap[alojamiento.id_cliente] || {};
+        const habitacion = habitacionesMap[alojamiento.id_habitacion] || {};
+        const servicios = serviciosPorAlojamiento[alojamiento.id] || { cantidad: 0, total: 0 };
+        
+        // Calcular días de alojamiento
+        const fechaInicio = new Date(alojamiento.fecha_alojamiento);
+        const fechaFin = new Date(alojamiento.fecha_alojamiento_vencimiento);
+        const diasAlojamiento = Math.ceil((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
+        
+        // Calcular totales
+        const precioPorDia = habitacion.precio_dia || 0;
+        const totalAlojamiento = diasAlojamiento * precioPorDia;
+        const totalServicios = servicios.total;
+        const totalGlobal = totalAlojamiento + totalServicios;
+
+        return {
+          'ID Alojamiento': alojamiento.id,
+          'Documento Cliente': cliente.nro_doc || "N/A",
+          'Nombre': cliente.nombre || "N/A",
+          'Apellido': cliente.apellido || "N/A",
+          'Tipo Documento': cliente.tipo_documento || "N/A",
+          'Teléfono': cliente.numero_telefono || "N/A",
+          'Correo': cliente.correo || "N/A",
+          'Código Habitación': alojamiento.id_habitacion || "N/A",
+          'Tipo Habitación': habitacion.tipo || "N/A",
+          'Piso': habitacion.piso || "N/A",
+          'Precio por Día': precioPorDia ? `S/. ${precioPorDia.toFixed(2)}` : "S/. 0.00",
+          'Fecha Alojamiento': alojamiento.fecha_alojamiento || "N/A",
+          'Fecha Vencimiento': alojamiento.fecha_alojamiento_vencimiento || "N/A",
+          'Días de Estancia': diasAlojamiento,
+          'Estado Reserva': alojamiento.estado_reserva || "N/A",
+          'Cantidad Servicios Solicitados': servicios.cantidad,
+          'Total Servicios': totalServicios ? `S/. ${totalServicios.toFixed(2)}` : "S/. 0.00",
+          'Total Alojamiento': `S/. ${totalAlojamiento.toFixed(2)}`,
+          'Total Global': `S/. ${totalGlobal.toFixed(2)}`,
+          'Comentario': alojamiento.comentario || ""
+        };
+      });
+
+      // Crear libro de Excel con SheetJS
+      const libro = XLSX.utils.book_new();
+      const hoja = XLSX.utils.json_to_sheet(datosExcel);
+
+      // Configurar ancho de columnas
+      const anchos = [
+        { wch: 15 }, // ID Alojamiento
+        { wch: 18 }, // Documento Cliente
+        { wch: 20 }, // Nombre
+        { wch: 20 }, // Apellido
+        { wch: 15 }, // Tipo Documento
+        { wch: 15 }, // Teléfono
+        { wch: 25 }, // Correo
+        { wch: 18 }, // Código Habitación
+        { wch: 20 }, // Tipo Habitación
+        { wch: 8 },  // Piso
+        { wch: 15 }, // Precio por Día
+        { wch: 18 }, // Fecha Alojamiento
+        { wch: 18 }, // Fecha Vencimiento
+        { wch: 15 }, // Días de Estancia
+        { wch: 15 }, // Estado Reserva
+        { wch: 20 }, // Cantidad Servicios
+        { wch: 15 }, // Total Servicios
+        { wch: 18 }, // Total Alojamiento
+        { wch: 15 }, // Total Global
+        { wch: 30 }  // Comentario
+      ];
+      hoja['!cols'] = anchos;
+
+      // Agregar hoja al libro
+      XLSX.utils.book_append_sheet(libro, hoja, "Alojamientos");
+
+      // Generar nombre del archivo
+      const nombreArchivo = `reporte_alojamientos_${fechaDesde}_${fechaHasta}.xlsx`;
+
+      // Descargar archivo
+      XLSX.writeFile(libro, nombreArchivo);
+
+      cerrarModalReporteAlojamientos();
+      mostrarNotificacion(`Reporte Excel generado exitosamente: ${nombreArchivo} - Total de registros: ${alojamientos.length}`, "exito");
+
+    } finally {
+      // Restaurar botón
+      btnGenerar.innerHTML = textoOriginal;
+      btnGenerar.disabled = false;
+    }
+
+  } catch (error) {
+    console.error("Error al generar reporte de alojamientos:", error);
+    mostrarNotificacion("Error al generar el reporte: " + error.message, "error");
+    
+    // Restaurar botón en caso de error
+    const btnGenerar = document.querySelector(".btn-generar-aloj");
+    if (btnGenerar) {
+      btnGenerar.innerHTML = '<i class="fa-solid fa-file-excel"></i> Generar Excel';
+      btnGenerar.disabled = false;
+    }
+  }
 }
 
 async function generarReporte() {

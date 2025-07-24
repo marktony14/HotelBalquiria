@@ -6,9 +6,14 @@
         <span class="seccion">ADMINISTRACIÓN/GESTIÓN</span>
         <h2 class="titulo-gestion">GESTIÓN DE HABITACIONES</h2>
       </div>
-      <button class="btn-nuevo" onclick="abrirModalHabitacion()">
-        <i class="fa-solid fa-plus"></i> Nueva Habitación
-      </button>
+      <div class="header-acciones">
+        <button class="btn-reporte" onclick="abrirModalReporteAlojamientos()">
+          <i class="fa-solid fa-file-excel"></i> Reportes de Alojamientos
+        </button>
+        <button class="btn-nuevo" onclick="abrirModalHabitacion()">
+          <i class="fa-solid fa-plus"></i> Nueva Habitación
+        </button>
+      </div>
     </div>
 
     <div class="filtros-busqueda">
@@ -137,46 +142,47 @@
         </div>
         <div class="modal-body">
           <form class="form-habitacion">
+            <input type="hidden" id="habitacion-codigo-original" />
             <div class="form-grupo">
               <label>Código de Habitación</label>
-              <input type="text" placeholder="Ej: 101" class="input-form" />
+              <input type="text" id="habitacion-codigo" placeholder="Ej: 101" class="input-form" />
             </div>
             <div class="form-grupo">
               <label>Tipo de Habitación</label>
-              <select class="select-form">
-                <option value="">Seleccionar tipo</option>
-                <option value="simple">Simple</option>
-                <option value="doble">Doble</option>
-                <option value="suite">Suite</option>
-              </select>
+              <input type="text" id="habitacion-tipo" placeholder="Ej: Personal, Personal (VIP), Familiar" class="input-form" />
             </div>
             <div class="form-grupo">
               <label>Piso</label>
-              <select class="select-form">
+              <select id="habitacion-piso" class="select-form">
                 <option value="">Seleccionar piso</option>
                 <option value="1">Piso 1</option>
                 <option value="2">Piso 2</option>
                 <option value="3">Piso 3</option>
+                <option value="4">Piso 4</option>
+                <option value="5">Piso 5</option>
               </select>
             </div>
             <div class="form-grupo">
               <label>Precio por Día (S/.)</label>
-              <input type="number" placeholder="0.00" class="input-form" />
+              <input type="number" id="habitacion-precio" placeholder="0.00" step="0.01" min="0" class="input-form" />
             </div>
             <div class="form-grupo">
               <label>Descripción</label>
               <textarea
+                id="habitacion-descripcion"
                 placeholder="Descripción de la habitación..."
                 class="textarea-form"
               ></textarea>
             </div>
             <div class="form-grupo">
-              <label>Imágenes</label>
-              <div class="upload-area">
-                <i class="fa-solid fa-cloud-upload-alt"></i>
-                <p>Arrastra las imágenes aquí o haz clic para seleccionar</p>
-                <input type="file" multiple accept="image/*" class="input-file" />
-              </div>
+              <label>Imágenes (URLs separadas por comas)</label>
+              <textarea
+                id="habitacion-imagenes"
+                placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"
+                class="textarea-form"
+                rows="3"
+              ></textarea>
+              <small style="color: #666; font-size: 0.85em;">Ingrese las URLs de las imágenes separadas por comas</small>
             </div>
           </form>
         </div>
@@ -184,7 +190,42 @@
           <button class="btn-cancelar" onclick="cerrarModalHabitacion()">
             Cancelar
           </button>
-          <button class="btn-guardar">Guardar Habitación</button>
+          <button class="btn-guardar" onclick="guardarHabitacion()">Guardar Habitación</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para reporte de alojamientos -->
+    <div class="modal-overlay" id="modalReporteAlojamientos">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-file-excel"></i> Generar Reporte de Alojamientos</h3>
+          <button class="modal-close" onclick="cerrarModalReporteAlojamientos()">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="filtros-reporte">
+            <div class="filtro-grupo">
+              <label>Fecha Desde:</label>
+              <input type="date" id="fecha-desde-aloj" class="input-fecha" />
+            </div>
+            <div class="filtro-grupo">
+              <label>Fecha Hasta:</label>
+              <input type="date" id="fecha-hasta-aloj" class="input-fecha" />
+            </div>
+          </div>
+          <div class="info-reporte">
+            <p><i class="fa-solid fa-info-circle"></i> Este reporte incluye información detallada de todos los alojamientos, clientes, habitaciones y servicios asociados en el rango de fechas seleccionado.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModalReporteAlojamientos()">
+            Cancelar
+          </button>
+          <button class="btn-generar-aloj" onclick="generarReporteAlojamientos()">
+            <i class="fa-solid fa-file-excel"></i> Generar Excel
+          </button>
         </div>
       </div>
     </div>

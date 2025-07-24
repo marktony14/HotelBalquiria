@@ -3,6 +3,9 @@
   <header class="header">
     <span class="seccion">RECEPCION/CONTROL/RESERVAS</span>
     <h3>RESERVAS</h3>
+    <button class="btn-reporte" onclick="abrirModalReporteAlojamientos()">
+      <i class="fa-solid fa-file-excel"></i> Reporte de Alojamientos
+    </button>
   </header>
 
   <section class="tabla-reservas">
@@ -23,4 +26,39 @@
       </tbody>
     </table>
   </section>
+
+  <!-- Modal para reporte de alojamientos -->
+  <div class="modal-overlay" id="modalReporteAlojamientos" style="display: none;">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-file-excel"></i> Generar Reporte de Alojamientos</h3>
+        <button class="modal-close" onclick="cerrarModalReporteAlojamientos()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="filtros-reporte">
+          <div class="filtro-grupo">
+            <label>Fecha Desde:</label>
+            <input type="date" id="fecha-desde-aloj" class="input-fecha" />
+          </div>
+          <div class="filtro-grupo">
+            <label>Fecha Hasta:</label>
+            <input type="date" id="fecha-hasta-aloj" class="input-fecha" />
+          </div>
+        </div>
+        <div class="info-reporte">
+          <p><i class="fa-solid fa-info-circle"></i> Este reporte incluye información detallada de todos los alojamientos, clientes, habitaciones y servicios asociados en el rango de fechas seleccionado.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" onclick="cerrarModalReporteAlojamientos()">
+          Cancelar
+        </button>
+        <button class="btn-generar-aloj" onclick="generarReporteAlojamientos()">
+          <i class="fa-solid fa-file-excel"></i> Generar Excel
+        </button>
+      </div>
+    </div>
+  </div>
 </main>

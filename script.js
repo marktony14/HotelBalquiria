@@ -241,6 +241,11 @@ async function mostrarAlojamientosEnReservas() {
           </select>
         </td>
         <td class="comentario">${a.comentario || ""}</td>
+        <td class="boleta-column">
+          <button class="btn-boleta" onclick="generarBoleta(${a.id})" title="Generar Boleta">
+            <i class="fa-solid fa-file-pdf"></i>
+          </button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
@@ -2212,4 +2217,220 @@ async function guardarTipoServicio() {
 
 function cerrarModalServicio() {
   document.getElementById("modalServicio").style.display = "none";
+}
+
+// Función para generar boleta en PDF
+async function generarBoleta(idAlojamiento) {
+  try {
+    // Mostrar indicador de carga
+    mostrarNotificacion("Generando boleta, por favor espere...", "info");
+
+    // Obtener datos del alojamiento con información relacionada
+    const { data: alojamiento, error: errorAloj } = await supabase
+      .from("alojamientos")
+      .select("*")
+      .eq("id", idAlojamiento)
+      .single();
+
+    if (errorAloj) throw errorAloj;
+
+    // Obtener datos del cliente
+    const { data: cliente } = await supabase
+      .from("clientes")
+      .select("*")
+      .eq("nro_doc", alojamiento.id_cliente)
+      .single();
+
+    // Obtener datos de la habitación
+    const { data: habitacion } = await supabase
+      .from("habitaciones")
+      .select("*")
+      .eq("codigo_habitacion", alojamiento.id_habitacion)
+      .single();
+
+    // Obtener servicios solicitados para este alojamiento
+    const { data: serviciosSolicitados } = await supabase
+      .from("servicios_solicitados")
+      .select(`
+        *,
+        servicios:servicios(descripcion, precio, tipo_servicio)
+      `)
+      .eq("id_alojamiento", idAlojamiento);
+
+    // Calcular totales
+    const fechaInicio = new Date(alojamiento.fecha_alojamiento);
+    const fechaFin = new Date(alojamiento.fecha_alojamiento_vencimiento);
+    const diasEstancia = Math.ceil((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
+    const totalAlojamiento = diasEstancia * (habitacion?.precio_dia || 0);
+    
+    let totalServicios = 0;
+    if (serviciosSolicitados) {
+      totalServicios = serviciosSolicitados.reduce((sum, ss) => {
+        return sum + ((ss.cantidad || 1) * (ss.servicios?.precio || 0));
+      }, 0);
+    }
+    
+    const totalGeneral = totalAlojamiento + totalServicios;
+
+    // Crear el PDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Configuración de colores
+    const colorPrimario = [147, 51, 234]; // Morado
+    const colorSecundario = [22, 192, 147]; // Verde
+    const colorTexto = [31, 41, 55]; // Gris oscuro
+
+    // Encabezado
+    doc.setFillColor(...colorPrimario);
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('HOTEL VALQUIRIA', 20, 25);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('BOLETA ELECTRÓNICA', 20, 35);
+
+    // Información de la boleta
+    doc.setTextColor(...colorTexto);
+    doc.setFontSize(10);
+    doc.text(`Boleta N°: ${String(idAlojamiento).padStart(6, '0')}`, 150, 25);
+    doc.text(`Fecha: ${new Date().toLocaleDateString('es-PE')}`, 150, 32);
+
+    // Información del cliente
+    let yPos = 55;
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colorPrimario);
+    doc.text('DATOS DEL CLIENTE', 20, yPos);
+    
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...colorTexto);
+    doc.text(`Cliente: ${cliente?.nombre || 'N/A'} ${cliente?.apellido || ''}`, 20, yPos);
+    yPos += 6;
+    doc.text(`${cliente?.tipo_documento || 'DNI'}: ${cliente?.nro_doc || 'N/A'}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Teléfono: ${cliente?.numero_telefono || 'N/A'}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Email: ${cliente?.correo || 'N/A'}`, 20, yPos);
+
+    // Información del alojamiento
+    yPos += 15;
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colorPrimario);
+    doc.text('DETALLE DEL ALOJAMIENTO', 20, yPos);
+    
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...colorTexto);
+    doc.text(`Habitación: ${habitacion?.codigo_habitacion || 'N/A'}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Tipo: ${habitacion?.tipo || 'N/A'}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Piso: ${habitacion?.piso || 'N/A'}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Fecha Inicio: ${alojamiento.fecha_alojamiento}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Fecha Fin: ${alojamiento.fecha_alojamiento_vencimiento}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Días de Estancia: ${diasEstancia}`, 20, yPos);
+    yPos += 6;
+    doc.text(`Precio por Día: S/. ${(habitacion?.precio_dia || 0).toFixed(2)}`, 20, yPos);
+
+    // Tabla de costos de alojamiento
+    yPos += 15;
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colorPrimario);
+    doc.text('RESUMEN DE GASTOS', 20, yPos);
+
+    // Encabezado de tabla
+    yPos += 10;
+    doc.setFillColor(240, 240, 240);
+    doc.rect(20, yPos - 5, 170, 8, 'F');
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colorTexto);
+    doc.text('CONCEPTO', 25, yPos);
+    doc.text('CANTIDAD', 90, yPos);
+    doc.text('PRECIO UNIT.', 120, yPos);
+    doc.text('TOTAL', 160, yPos);
+
+    // Fila de alojamiento
+    yPos += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.text('Alojamiento', 25, yPos);
+    doc.text(diasEstancia.toString(), 95, yPos);
+    doc.text(`S/. ${(habitacion?.precio_dia || 0).toFixed(2)}`, 125, yPos);
+    doc.text(`S/. ${totalAlojamiento.toFixed(2)}`, 165, yPos);
+
+    // Servicios solicitados
+    if (serviciosSolicitados && serviciosSolicitados.length > 0) {
+      yPos += 8;
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...colorSecundario);
+      doc.text('SERVICIOS SOLICITADOS:', 25, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...colorTexto);
+
+      serviciosSolicitados.forEach(servicio => {
+        yPos += 8;
+        const cantidad = servicio.cantidad || 1;
+        const precio = servicio.servicios?.precio || 0;
+        const subtotal = cantidad * precio;
+        
+        doc.text(servicio.servicios?.descripcion || 'Servicio', 25, yPos);
+        doc.text(cantidad.toString(), 95, yPos);
+        doc.text(`S/. ${precio.toFixed(2)}`, 125, yPos);
+        doc.text(`S/. ${subtotal.toFixed(2)}`, 165, yPos);
+      });
+    }
+
+    // Línea separadora
+    yPos += 10;
+    doc.setDrawColor(...colorPrimario);
+    doc.setLineWidth(0.5);
+    doc.line(20, yPos, 190, yPos);
+
+    // Totales
+    yPos += 10;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text(`Subtotal Alojamiento: S/. ${totalAlojamiento.toFixed(2)}`, 120, yPos);
+    yPos += 8;
+    doc.text(`Subtotal Servicios: S/. ${totalServicios.toFixed(2)}`, 120, yPos);
+    yPos += 10;
+    doc.setFontSize(14);
+    doc.setTextColor(...colorPrimario);
+    doc.text(`TOTAL: S/. ${totalGeneral.toFixed(2)}`, 120, yPos);
+
+    // Pie de página
+    yPos += 20;
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(128, 128, 128);
+    doc.text('Gracias por elegir Hotel Valquiria', 20, yPos);
+    doc.text(`Estado de Reserva: ${alojamiento.estado_reserva}`, 20, yPos + 5);
+    
+    if (alojamiento.comentario) {
+      doc.text(`Comentarios: ${alojamiento.comentario}`, 20, yPos + 10);
+    }
+
+    // Generar y descargar el PDF
+    const nombreArchivo = `boleta_${String(idAlojamiento).padStart(6, '0')}_${cliente?.apellido || 'cliente'}.pdf`;
+    doc.save(nombreArchivo);
+
+    mostrarNotificacion(`Boleta generada exitosamente: ${nombreArchivo}`, "exito");
+
+  } catch (error) {
+    console.error("Error al generar boleta:", error);
+    mostrarNotificacion("Error al generar la boleta: " + error.message, "error");
+  }
 }
